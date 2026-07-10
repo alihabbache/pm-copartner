@@ -121,6 +121,35 @@
   .proof-strip span { display: flex; align-items: center; gap: 5px; }
   .proof-strip .tick { color: var(--teal); font-size: 13px; }
 
+  /* ── NAV GUIDE ── */
+  .nav-guide-section {
+    max-width: 760px; margin: 0 auto; padding: 56px 24px 0;
+  }
+  .nav-guide-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 14px; margin-top: 26px;
+  }
+  .nav-guide-card {
+    border: 1.5px solid var(--border); border-radius: var(--radius);
+    padding: 16px 18px; background: var(--white);
+  }
+  .nav-guide-card .card-stage {
+    font-size: 9.5px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; border-radius: 3px;
+    padding: 2px 7px; display: inline-block; margin-bottom: 9px;
+  }
+  .nav-guide-card h4 {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    margin-bottom: 5px;
+  }
+  .nav-guide-card p { font-size: 12px; color: var(--ink-3); line-height: 1.55; margin-bottom: 9px; }
+  .nav-guide-card .card-link {
+    font-size: 12px; font-weight: 600; color: var(--teal);
+    display: inline-flex; align-items: center; gap: 3px;
+  }
+  .nav-guide-card .card-link:hover { opacity: 0.8; text-decoration: none; }
+
   /* ── WORKFLOW TABLE ── */
   .workflow-section {
     border-top: 1px solid var(--border);
@@ -285,7 +314,7 @@
     <a href="05-launch.html">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
   </div>
 </nav>
 
@@ -295,7 +324,7 @@
   <p class="hero-sub">Five AI agents that handle the PM grunt work — research synthesis, backlog scoring, PRD drafting, metrics digests, and release notes — so you ship faster.</p>
   <div class="hero-actions">
     <a class="btn-primary" href="01-discovery.html">Browse the agents</a>
-    <a class="btn-ghost" href="https://github.com/alihabbache/pm-copartner" target="_blank">View on GitHub</a>
+    <a class="btn-ghost" href="https://github.com/alihabbache/pm-copartner" target="_blank" rel="noopener noreferrer">View on GitHub</a>
   </div>
   <div class="proof-strip">
     <span><span class="tick">✓</span> No account needed</span>
@@ -315,7 +344,7 @@
         <tr>
           <th>Stage</th>
           <th>What it does</th>
-          <th style="width:110px;">When to run</th>
+          <th style="width:130px;">Best moment to run it</th>
         </tr>
       </thead>
       <tbody>
@@ -331,7 +360,7 @@
             </div>
           </td>
           <td><div class="wf-desc">Reads raw interview notes and produces a structured insight report — recurring themes, supporting quotes, and a ranked opportunity table.</div></td>
-          <td><div class="wf-cadence">After research sprints</div></td>
+          <td><div class="wf-cadence">Right after interviews close, before your team starts debating what users "really meant"</div></td>
         </tr>
         <tr class="workflow-row">
           <td>
@@ -345,7 +374,7 @@
             </div>
           </td>
           <td><div class="wf-desc">Scores your entire backlog against your OKRs. Every item gets a weighted priority score and a one-line rationale — no more gut-feel rankings.</div></td>
-          <td><div class="wf-cadence">Weekly, before planning</div></td>
+          <td><div class="wf-cadence">The day before sprint planning — while the backlog is still in flux and easy to reorder</div></td>
         </tr>
         <tr class="workflow-row">
           <td>
@@ -359,7 +388,7 @@
             </div>
           </td>
           <td><div class="wf-desc">Drafts a complete PRD from any feature request — even a single Slack sentence. Every missing piece becomes a tracked open question.</div></td>
-          <td><div class="wf-cadence">On demand</div></td>
+          <td><div class="wf-cadence">The moment a feature request lands — Slack message, email, or meeting note, doesn't matter</div></td>
         </tr>
         <tr class="workflow-row">
           <td>
@@ -373,7 +402,7 @@
             </div>
           </td>
           <td><div class="wf-desc">Benchmarks your KPIs against targets, assigns RAG status, surfaces top movers, and writes one specific action per red metric.</div></td>
-          <td><div class="wf-cadence">Weekly</div></td>
+          <td><div class="wf-cadence">Every Monday morning — before your standup, not after you've already decided how the week looks</div></td>
         </tr>
         <tr class="workflow-row">
           <td>
@@ -387,10 +416,48 @@
             </div>
           </td>
           <td><div class="wf-desc">Reads closed sprint tickets and writes user-facing release notes in your brand voice — grouped by impact, ready to publish.</div></td>
-          <td><div class="wf-cadence">Per release</div></td>
+          <td><div class="wf-cadence">Once engineering marks the sprint done — before you touch up draft release notes yourself</div></td>
         </tr>
       </tbody>
     </table>
+  </div>
+</section>
+
+<section class="nav-guide-section">
+  <div class="section-label">Using this site</div>
+  <div class="section-heading">How to find what you need</div>
+  <p style="font-size:14px;color:var(--ink-3);max-width:580px;margin-top:-18px;">Each agent lives on its own page. Pick the one that matches your current task, copy the prompt, and you're running. The nav bar at the top is always there if you need to switch agents mid-work.</p>
+  <div class="nav-guide-grid">
+    <div class="nav-guide-card">
+      <span class="card-stage" style="background:#ede9fe;color:#6d28d9;">Research</span>
+      <h4>Discovery</h4>
+      <p>You have raw interview notes and need a structured report — themes, quotes, ranked opportunities — that your team can actually act on.</p>
+      <a class="card-link" href="01-discovery.html">Go to Discovery →</a>
+    </div>
+    <div class="nav-guide-card">
+      <span class="card-stage" style="background:#fef3c7;color:#92400e;">Strategy</span>
+      <h4>Planning</h4>
+      <p>Your backlog is a pile of competing ideas and you need an objective priority score before the next planning session starts.</p>
+      <a class="card-link" href="02-planning.html">Go to Planning →</a>
+    </div>
+    <div class="nav-guide-card">
+      <span class="card-stage" style="background:#dbeafe;color:#1e40af;">Delivery</span>
+      <h4>Specs</h4>
+      <p>A feature request just landed — half-formed, in a Slack thread — and engineering is already asking for a PRD.</p>
+      <a class="card-link" href="03-specs.html">Go to Specs →</a>
+    </div>
+    <div class="nav-guide-card">
+      <span class="card-stage" style="background:#dcfce7;color:#166534;">Metrics</span>
+      <h4>Analytics</h4>
+      <p>Monday morning. You have a spreadsheet of last week's KPIs and need a clear read on what moved, what didn't, and why.</p>
+      <a class="card-link" href="04-analytics.html">Go to Analytics →</a>
+    </div>
+    <div class="nav-guide-card">
+      <span class="card-stage" style="background:#fce7f3;color:#9d174d;">Launch</span>
+      <h4>Launch</h4>
+      <p>The sprint just closed. You have a list of merged tickets and need polished, user-facing release notes before end of day.</p>
+      <a class="card-link" href="05-launch.html">Go to Launch →</a>
+    </div>
   </div>
 </section>
 
@@ -440,22 +507,22 @@
 <section class="author-strip">
   <p>Built by <strong>Ali Habbache</strong> — product leader, open-source contributor, and the PM who got tired of spending Monday mornings writing things AI can draft in 30 seconds.</p>
   <p>
-    <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">LinkedIn</a>
+    <a href="https://www.linkedin.com/in/alihabbache/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
     &nbsp;·&nbsp;
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">Star on GitHub</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank" rel="noopener noreferrer">Star on GitHub</a>
     &nbsp;·&nbsp;
-    <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contribute</a>
+    <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contribute</a>
   </p>
 </section>
 
 <footer>
   <span>PM CoPartner &mdash; MIT License</span>
   <span>&middot;</span>
-  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank" rel="noopener noreferrer">Ali Habbache</a></span>
   <span>&middot;</span>
-  <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
-  <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
-  <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
+  <a href="https://github.com/alihabbache/pm-copartner" target="_blank" rel="noopener noreferrer">GitHub</a>
+  <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing</a>
+  <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank" rel="noopener noreferrer">Report an issue</a>
 </footer>
 
 </body>
