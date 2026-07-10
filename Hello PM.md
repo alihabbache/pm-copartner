@@ -34,15 +34,15 @@ Each agent folder contains:
 
 | # | Agent | Input | Output | Run When |
 |---|-------|-------|--------|----------|
-| 01 | **Discovery** | Raw interview notes (any format) | Structured insight report: themes, quotes, ranked opportunities | After research sprints, before planning |
-| 02 | **Planning** | Backlog list + one-sentence OKR | Scored & ranked prioritisation brief with rationale per item | Weekly before sprint planning |
-| 03 | **Specs** | Feature request (any format, even one sentence) | First-draft PRD: problem, users, metrics, scope, open questions | Always on / on demand |
-| 04 | **Analytics** | This week's numbers + targets | RAG-status digest: metrics vs target, top movers, recommended actions | Weekly Monday or Friday EOD |
-| 05 | **Launch** | Closed ticket list or sprint summary | User-facing release notes in your brand voice | Per release / per sprint close |
+| 01 | **Insight** | Raw interview notes (any format) | Structured insight report: themes, quotes, ranked opportunities | After research sprints, before planning |
+| 02 | **Prioritize** | Backlog list + one-sentence OKR | Scored & ranked prioritisation brief with rationale per item | Weekly before sprint planning |
+| 03 | **Blueprint** | Feature request (any format, even one sentence) | First-draft PRD: problem, users, metrics, scope, open questions | Always on / on demand |
+| 04 | **Pulse** | This week's numbers + targets | RAG-status digest: metrics vs target, top movers, recommended actions | Weekly Monday or Friday EOD |
+| 05 | **Ship** | Closed ticket list or sprint summary | User-facing release notes in your brand voice | Per release / per sprint close |
 
 ---
 
-## 01 — Discovery Agent
+## 01 — Insight Agent
 
 **File:** [`01-discovery/prompt.md`](./01-discovery/prompt.md)
 
@@ -73,7 +73,7 @@ Interviews conducted: [N] | Date range: [start] – [end]
 
 ---
 
-## 02 — Planning Agent
+## 02 — Prioritize Agent
 
 **File:** [`02-planning/prompt.md`](./02-planning/prompt.md)
 
@@ -105,7 +105,7 @@ OKR / Focus: [goal] | Items reviewed: [N]
 
 ---
 
-## 03 — Specs Agent
+## 03 — Blueprint Agent
 
 **File:** [`03-specs/prompt.md`](./03-specs/prompt.md)
 
@@ -138,7 +138,7 @@ Status: Draft | Date: [date] | Request source: [Slack/Jira/Email/etc.] | Product
 
 ---
 
-## 04 — Analytics Agent
+## 04 — Pulse Agent
 
 **File:** [`04-analytics/prompt.md`](./04-analytics/prompt.md)
 
@@ -171,7 +171,7 @@ Status: Draft | Date: [date] | Request source: [Slack/Jira/Email/etc.] | Product
 
 ---
 
-## 05 — Launch Agent
+## 05 — Ship Agent
 
 **File:** [`05-launch/prompt.md`](./05-launch/prompt.md)
 
@@ -248,11 +248,11 @@ Use Claude Desktop's `/schedule` command to automate any agent:
 
 | Agent | Recommended schedule |
 |-------|---------------------|
-| 01 Discovery | Manual trigger after research sessions |
-| 02 Planning | Every Monday before planning meeting |
-| 03 Specs | Daily or on demand |
-| 04 Analytics | Every Monday 8am or Friday 4pm |
-| 05 Launch | Per sprint close (manual trigger) |
+| 01 Insight | Manual trigger after research sessions |
+| 02 Prioritize | Every Monday before planning meeting |
+| 03 Blueprint | Daily or on demand |
+| 04 Pulse | Every Monday 8am or Friday 4pm |
+| 05 Ship | Per sprint close (manual trigger) |
 
 ---
 

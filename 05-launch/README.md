@@ -1,4 +1,4 @@
-# 05 — Launch: Release Notes Generator
+# 05 — Ship: Release Notes Generator
 
 ## What It Does
 

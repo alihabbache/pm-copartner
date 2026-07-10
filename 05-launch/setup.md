@@ -1,4 +1,4 @@
-# Launch Agent — Tool Setup
+# Ship Agent — Tool Setup
 
 This agent works with or without any integrations. Start with the minimal path; add connectors when you're ready.
 

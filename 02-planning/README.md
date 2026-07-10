@@ -1,4 +1,4 @@
-# 02 — Planning: Roadmap Prioritisation Brief
+# 02 — Prioritize: Roadmap Prioritisation Brief
 
 ## What It Does
 

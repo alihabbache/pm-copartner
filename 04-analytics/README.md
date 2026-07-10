@@ -1,4 +1,4 @@
-# 04 — Analytics: Weekly Metrics Digest
+# 04 — Pulse: Weekly Metrics Digest
 
 ## What It Does
 

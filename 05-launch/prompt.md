@@ -1,4 +1,4 @@
-# Launch Agent — Prompt
+# Ship Agent — Prompt
 
 Copy the full prompt below into Claude. Replace every `[bracket]` with your own details.
 You can skip any integration lines that don't apply — the agent will work with whatever you provide.

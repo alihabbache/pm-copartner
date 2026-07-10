@@ -1,4 +1,4 @@
-# 03 — Specs: PRD Auto-Drafter
+# 03 — Blueprint: PRD Auto-Drafter
 
 ## What It Does
 

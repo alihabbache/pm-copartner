@@ -1,4 +1,4 @@
-# 01 — Discovery: User Research Synthesis
+# 01 — Insight: User Research Synthesis
 
 ## What It Does
 

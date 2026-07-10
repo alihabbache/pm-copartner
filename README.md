@@ -17,11 +17,11 @@ No specific toolstack required. Every agent lists a **primary path** (e.g. Notio
 
 | # | Agent | What It Does | Run When |
 |---|-------|-------------|----------|
-| [01](./01-discovery/) | **Discovery** | Turns raw user interview notes into a structured insight report | Per research sprint |
-| [02](./02-planning/) | **Planning** | Scores and ranks backlog items against strategy & OKRs | Weekly |
-| [03](./03-specs/) | **Specs** | Auto-drafts PRDs from feature requests | Always on / on demand |
-| [04](./04-analytics/) | **Analytics** | Compares metrics to targets and sends a digest | Weekly |
-| [05](./05-launch/) | **Launch** | Writes user-facing release notes from sprint output | Per release |
+| [01](./01-discovery/) | **Insight** | Turns raw user interview notes into a structured insight report | Per research sprint |
+| [02](./02-planning/) | **Prioritize** | Scores and ranks backlog items against strategy & OKRs | Weekly |
+| [03](./03-specs/) | **Blueprint** | Auto-drafts PRDs from feature requests | Always on / on demand |
+| [04](./04-analytics/) | **Pulse** | Compares metrics to targets and sends a digest | Weekly |
+| [05](./05-launch/) | **Ship** | Writes user-facing release notes from sprint output | Per release |
 
 ---
 
