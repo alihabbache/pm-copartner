@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Specs Agent — PM CoPartner</title>
+<meta name="description" content="Auto-draft a full PRD from any feature request — even a single sentence. Every gap becomes an open question."/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.6; background: #ffffff; color: #1f2328; }
+  a { color: #3b82d4; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  nav { border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 52px; position: sticky; top: 0; background: #fff; z-index: 100; }
+  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  .nav-logo:hover { text-decoration: none; }
+  .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .nav-links a { font-size: 13px; color: #57606a; }
+  .nav-links a:hover { color: #1f2328; text-decoration: none; }
+  .nav-links a.active { color: #1f2328; font-weight: 600; }
+  .nav-right { margin-left: auto; }
+  .nav-right a { font-size: 13px; font-weight: 600; background: #1f2328; color: #fff; padding: 6px 14px; border-radius: 6px; }
+  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
+  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  .breadcrumb { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
+  .breadcrumb a { color: #8b949e; }
+  .breadcrumb a:hover { color: #3b82d4; }
+  .agent-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
+  .agent-num-lg { width: 48px; height: 48px; border-radius: 10px; background: #1f2328; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .agent-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .agent-title p { font-size: 14px; color: #57606a; }
+  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .chip { font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; color: #57606a; }
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #57606a; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 18px; }
+  .section { margin-bottom: 40px; }
+  p { margin-bottom: 10px; }
+  ul { padding-left: 20px; margin-bottom: 12px; }
+  li { margin-bottom: 5px; font-size: 13.5px; color: #1f2328; }
+  .prompt-wrap { position: relative; }
+  .prompt-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12.5px; line-height: 1.7; color: #1f2328; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+  .copy-btn { position: absolute; top: 10px; right: 10px; background: #1f2328; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
+  .copy-btn:hover { background: #3b82d4; }
+  .copy-btn.copied { background: #2d8a4e; }
+  .output-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.7; color: #57606a; white-space: pre-wrap; word-break: break-word; }
+  .tips-list { list-style: none; padding: 0; }
+  .tips-list li { padding: 10px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
+  .tips-list li strong { color: #1f2328; }
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .setup-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; }
+  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .setup-card p, .setup-card li { font-size: 12.5px; color: #57606a; }
+  .setup-card ul { padding-left: 16px; }
+  .agent-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
+  .agent-nav a { font-size: 12px; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 20px; color: #57606a; background: #fff; }
+  .agent-nav a:hover { border-color: #3b82d4; color: #3b82d4; text-decoration: none; }
+  .agent-nav a.active { background: #1f2328; color: #fff; border-color: #1f2328; }
+  footer { border-top: 1px solid #e5e7eb; padding: 24px; text-align: center; font-size: 12px; color: #8b949e; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  footer a { color: #8b949e; }
+  footer a:hover { color: #1f2328; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <div class="nav-links">
+    <a href="01-discovery.html">Discovery</a>
+    <a href="02-planning.html">Planning</a>
+    <a href="03-specs.html" class="active">Specs</a>
+    <a href="04-analytics.html">Analytics</a>
+    <a href="05-launch.html">Launch</a>
+  </div>
+  <div class="nav-right">
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="breadcrumb"><a href="index.html">PM CoPartner</a> / Agent 03</div>
+
+  <div class="agent-header">
+    <div class="agent-num-lg">03</div>
+    <div class="agent-title">
+      <h1>Specs</h1>
+      <p>Auto-draft a full PRD from any feature request — even a single sentence. Every gap becomes an open question.</p>
+      <div class="meta-chips">
+        <span class="chip">On demand</span>
+        <span class="chip">Always on</span>
+        <span class="chip">No setup required</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="agent-nav">
+    <a href="01-discovery.html">01 Discovery</a>
+    <a href="02-planning.html">02 Planning</a>
+    <a href="03-specs.html" class="active">03 Specs</a>
+    <a href="04-analytics.html">04 Analytics</a>
+    <a href="05-launch.html">05 Launch</a>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Prompt — Copy &amp; Paste into Claude</div>
+    <div class="prompt-wrap">
+      <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
+      <div class="prompt-box" id="prompt-text">You are a product manager assistant. Your job is to take a raw feature request and turn it into a structured first-draft PRD that is ready for PM review.
+
+## Your input
+
+[CHOOSE ONE — delete the others]
+
+**Option A — Paste the feature request:**
+Here is the feature request:
+---
+[PASTE THE REQUEST HERE — a Slack message, email, ticket, meeting note, or even one sentence]
+---
+
+**Option B — Pull from a tool (requires MCP):**
+Read new feature requests from [Slack channel name / Jira project / Linear team] since [DATE].
+For each new request, draft a separate PRD.
+
+**Additional context (optional — include any that apply):**
+- Product area: [e.g. onboarding, billing, search]
+- Target users: [e.g. SMB customers, admin users, developers]
+- Known constraints: [e.g. must ship in 2 weeks, no backend changes, must work on mobile]
+- Related existing feature: [describe if relevant]
+
+## Your task
+
+For each feature request:
+1. Identify the core user problem being solved (if not stated, infer it and flag your assumption).
+2. Identify the primary users affected.
+3. Define measurable success metrics.
+4. Define what is in scope and explicitly out of scope.
+5. List non-goals — what this feature deliberately does not solve.
+6. List open questions that must be answered before engineering can start.
+7. Produce a clean PRD draft in the format below.
+
+If the request is too vague to produce a meaningful PRD, do not make up details — instead list what information is needed and why.
+
+## Output format
+
+---
+# PRD: [Feature Name]
+
+| Field         | Value                        |
+|---------------|------------------------------|
+| Status        | Draft — pending PM review    |
+| Date          | [TODAY'S DATE]               |
+| Request source| [Slack / Jira / Email / etc.] |
+| Product area  | [Area]                       |
+
+---
+
+## Problem
+[What problem are we solving? Whose problem is it? What happens today without this feature?]
+
+## Users
+[Who is this for? What are they trying to accomplish? Include user type and context.]
+
+## Success Metrics
+- [ ] [Metric 1 — e.g. "X% of new users complete onboarding in under 5 min"]
+- [ ] [Metric 2]
+
+## In Scope
+- [Feature / behaviour 1]
+- [Feature / behaviour 2]
+
+## Out of Scope
+- [What this explicitly does NOT cover]
+
+## Non-Goals
+- [Problem this feature does not attempt to solve]
+
+## Open Questions
+- [ ] [Question that must be answered before build begins]
+- [ ] [Decision needed from design / engineering / legal / etc.]
+
+## Notes &amp; Assumptions
+- [Flag any inference you made about the request]
+---
+
+[OPTIONAL:]
+Post this PRD to [Notion page / Google Drive / filename].
+Notify [PM name / Slack channel] that a new draft PRD is ready for review.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">What You Get Back</div>
+    <div class="output-box"># PRD: [Feature Name]
+Status: Draft | Date: today | Source: [Slack/Jira/Email]
+
+## Problem
+## Users
+## Success Metrics (checkboxes)
+## In Scope / Out of Scope
+## Non-Goals
+## Open Questions (checkboxes)
+## Notes &amp; Assumptions</div>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Tips &amp; Variations</div>
+    <ul class="tips-list">
+      <li><strong>One sentence request?</strong> Paste it as-is. The agent drafts what it can and flags every gap as an open question — exactly what you want before a spec conversation.</li>
+      <li><strong>Multiple requests at once?</strong> Add: <em>"Here are [N] requests. Draft a separate PRD for each."</em> then list them numbered.</li>
+      <li><strong>Want a shorter output?</strong> Add: <em>"Write a lightweight PRD — 1-pager max, skip the table header."</em></li>
+      <li><strong>Want it written for engineers?</strong> Add: <em>"Write the scope section with enough detail for an engineer to estimate the work."</em></li>
+      <li><strong>Want it written for stakeholders?</strong> Add: <em>"Write the Problem section for a non-technical audience — no jargon."</em></li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <div class="section-label">Tool Connections (All Optional)</div>
+    <div class="setup-grid">
+      <div class="setup-card">
+        <h4>Minimal path (no tools)</h4>
+        <ul>
+          <li>Paste the feature request into Claude</li>
+          <li>Add optional context if you have it</li>
+          <li>Run — no accounts or connectors needed</li>
+        </ul>
+      </div>
+      <div class="setup-card">
+        <h4>Connected path (with MCP)</h4>
+        <ul>
+          <li><strong>Slack:</strong> monitor #feature-requests channel</li>
+          <li><strong>Jira / Linear:</strong> pull new tickets automatically</li>
+          <li><strong>Notion:</strong> save PRD drafts + notify team</li>
+        </ul>
+      </div>
+    </div>
+    <p style="font-size:12.5px; color:#57606a;">Full setup instructions in <a href="https://github.com/alihabbache/pm-copartner/blob/main/03-specs/setup.md" target="_blank">setup.md</a> on GitHub.</p>
+  </div>
+</div>
+
+<footer>
+  <span>PM CoPartner — MIT License</span>
+  <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
+  <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
+  <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
+</footer>
+
+<script>
+function copyPrompt(btn) {
+  var text = document.getElementById('prompt-text').innerText;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy prompt';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+</script>
+</body>
+</html>

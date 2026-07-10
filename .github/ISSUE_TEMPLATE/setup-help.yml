@@ -1,0 +1,46 @@
+name: "🔧 Tool Setup Help"
+description: "Setup instructions for a specific tool aren't working, or you need help connecting an integration."
+title: "[Setup] <agent name> + <tool name>"
+labels: ["setup-help"]
+body:
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Which agent?
+      options:
+        - 01 — Discovery
+        - 02 — Planning
+        - 03 — Specs
+        - 04 — Analytics
+        - 05 — Launch
+        - All / General
+    validations:
+      required: true
+
+  - type: input
+    id: tool
+    attributes:
+      label: Which tool?
+      placeholder: "e.g. Notion, Linear, Slack, Jira, Google Drive"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's not working?
+      placeholder: "e.g. The Notion MCP connector isn't reading from my database — I get an empty response."
+    validations:
+      required: true
+
+  - type: textarea
+    id: setup
+    attributes:
+      label: What have you tried?
+      placeholder: "e.g. I followed the setup.md instructions, installed the MCP server, and added my API key."
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested improvement to setup.md (optional)
+      description: If you figured it out, tell us what was missing so we can update the docs.

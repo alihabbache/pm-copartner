@@ -1,0 +1,706 @@
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PM CoPartner — Solution Architecture</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    background: #ffffff;
+    color: #1f2328;
+    padding: 32px 16px 48px;
+  }
+  .page { max-width: 760px; margin: 0 auto; }
+
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  h2 { font-size: 15px; font-weight: 600; margin-bottom: 14px; color: #1f2328; }
+  .subtitle { color: #57606a; font-size: 13px; margin-bottom: 36px; }
+  .section { margin-bottom: 40px; }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #57606a;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 6px; margin-bottom: 18px;
+  }
+
+  /* ── Layer labels ── */
+  .layer-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 6px; }
+  .layer-tag {
+    min-width: 72px; font-size: 10px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #8b949e; padding-top: 4px; text-align: right;
+    flex-shrink: 0;
+  }
+  .layer-content { flex: 1; }
+
+  /* ── PM actor ── */
+  .pm-box {
+    background: #f7f8fa; border: 1.5px solid #e5e7eb;
+    border-radius: 8px; padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .pm-icon {
+    width: 34px; height: 34px; background: #3b82d4;
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; color: #fff; font-size: 16px; flex-shrink: 0;
+  }
+  .pm-label { font-weight: 700; font-size: 14px; }
+  .pm-sub { font-size: 11px; color: #57606a; }
+
+  /* ── Data flow arrow ── */
+  .arrow-col {
+    display: flex; flex-direction: column; align-items: center;
+    margin: 2px 0; padding-left: 84px;
+  }
+  .arrow-line { width: 2px; height: 16px; background: #c9d1d9; }
+  .arrow-head {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid #c9d1d9;
+  }
+  .arrow-label-row {
+    display: flex; align-items: center; gap: 6px;
+    padding-left: 84px; margin: 0 0 2px;
+  }
+  .arrow-label { font-size: 10px; color: #8b949e; }
+
+  /* ── Input chips ── */
+  .input-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 4px; }
+  .chip {
+    background: #f0f4ff; border: 1px solid #b6c8f5;
+    border-radius: 20px; padding: 3px 10px;
+    font-size: 11px; color: #3b5bdb; font-weight: 600;
+  }
+  .chip.plain { background: #f7f8fa; border-color: #e5e7eb; color: #57606a; font-weight: 500; }
+
+  /* ── Claude engine box ── */
+  .claude-box {
+    background: #f0f4ff; border: 1.5px solid #b6c8f5;
+    border-radius: 10px; padding: 16px 16px 12px;
+  }
+  .claude-header {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 700; color: #3b5bdb; margin-bottom: 12px;
+  }
+  .claude-badge {
+    background: #3b5bdb; color: #fff;
+    font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 600;
+  }
+
+  /* ── Agent cards grid ── */
+  .agents-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .agent-card {
+    border-radius: 7px; padding: 10px 7px;
+    text-align: center; border: 1.5px solid;
+  }
+  .agent-card .num { font-size: 17px; font-weight: 800; display: block; margin-bottom: 1px; }
+  .agent-card .name { font-size: 11px; font-weight: 700; display: block; margin-bottom: 5px; }
+  .agent-card .io { font-size: 9.5px; line-height: 1.35; color: #57606a; text-align: left; }
+  .agent-card .io b { color: #1f2328; }
+  .agent-card .badge {
+    display: inline-block; font-size: 9px; padding: 2px 6px;
+    border-radius: 20px; font-weight: 600; margin-top: 6px;
+  }
+  .a1 { background: #fff7f0; border-color: #f4a15a; }
+  .a1 .num { color: #c96a00; } .a1 .badge { background: #fff0de; color: #c96a00; }
+  .a2 { background: #f0f9ff; border-color: #5ab4f4; }
+  .a2 .num { color: #0068b2; } .a2 .badge { background: #e0f2ff; color: #0068b2; }
+  .a3 { background: #f4f0ff; border-color: #a07cf4; }
+  .a3 .num { color: #6228d7; } .a3 .badge { background: #ede8ff; color: #6228d7; }
+  .a4 { background: #f0fff6; border-color: #4dcb8a; }
+  .a4 .num { color: #1a7a45; } .a4 .badge { background: #e0ffed; color: #1a7a45; }
+  .a5 { background: #fff0f3; border-color: #f47a8a; }
+  .a5 .num { color: #b0182e; } .a5 .badge { background: #ffe0e5; color: #b0182e; }
+
+  /* ── Prompt file row ── */
+  .prompt-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; margin-top: 8px; }
+  .prompt-chip {
+    background: #fff; border: 1px dashed #b6c8f5;
+    border-radius: 5px; padding: 4px 6px;
+    text-align: center; font-size: 10px; color: #3b5bdb; font-weight: 600;
+  }
+
+  /* ── Run path strip ── */
+  .run-paths { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+  .run-path {
+    flex: 1; min-width: 140px;
+    background: #fff; border: 1px solid #e5e7eb;
+    border-radius: 6px; padding: 8px 10px;
+    font-size: 11px;
+  }
+  .run-path .rp-title { font-weight: 700; color: #1f2328; margin-bottom: 2px; }
+  .run-path .rp-desc { color: #57606a; font-size: 10.5px; }
+
+  /* ── MCP tools grid ── */
+  .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+  .tool-card {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 7px; padding: 9px 11px;
+  }
+  .tool-card .tname { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+  .tool-card .tdesc { font-size: 10.5px; color: #57606a; margin-bottom: 5px; }
+  .tool-card .used-by { display: flex; flex-wrap: wrap; gap: 3px; }
+  .dot {
+    display: inline-block; width: 16px; height: 16px; border-radius: 50%;
+    font-size: 9px; font-weight: 800; color: #fff;
+    text-align: center; line-height: 16px;
+  }
+  .d1 { background: #c96a00; }
+  .d2 { background: #0068b2; }
+  .d3 { background: #6228d7; }
+  .d4 { background: #1a7a45; }
+  .d5 { background: #b0182e; }
+
+  .fallback-note {
+    background: #fffbe6; border: 1px solid #e8cf40;
+    border-radius: 6px; padding: 9px 13px;
+    font-size: 11.5px; color: #6b5a00; margin-top: 8px;
+  }
+
+  /* ── Output cards ── */
+  .output-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+  .out-card {
+    background: #f7f8fa; border: 1px solid #e5e7eb;
+    border-radius: 7px; padding: 9px 7px; text-align: center;
+  }
+  .out-card .oid { font-size: 10px; font-weight: 700; color: #8b949e; margin-bottom: 2px; }
+  .out-card .olabel { font-size: 10.5px; font-weight: 700; color: #1f2328; }
+  .out-card .odest { font-size: 9.5px; color: #57606a; margin-top: 3px; }
+
+  /* ── Product loop ── */
+  .loop-row {
+    display: flex; align-items: stretch; justify-content: center;
+    gap: 0; margin: 6px 0 4px;
+  }
+  .loop-node {
+    flex: 1; text-align: center; padding: 10px 4px 8px;
+    border-radius: 0; border: 1.5px solid; font-size: 11px; font-weight: 700;
+    position: relative;
+  }
+  .loop-node:first-child { border-radius: 7px 0 0 7px; }
+  .loop-node:last-child { border-radius: 0 7px 7px 0; }
+  .loop-node + .loop-node { border-left: none; }
+  .loop-node .lsub { font-size: 9.5px; font-weight: 400; color: #57606a; display: block; margin-top: 2px; }
+  .loop-node .larrow {
+    position: absolute; right: -10px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px; color: #c9d1d9; font-weight: 700; z-index: 2;
+    background: #fff; padding: 0 1px;
+  }
+  .ln1 { background: #fff7f0; border-color: #f4a15a; color: #c96a00; }
+  .ln2 { background: #f0f9ff; border-color: #5ab4f4; color: #0068b2; }
+  .ln3 { background: #f4f0ff; border-color: #a07cf4; color: #6228d7; }
+  .ln4 { background: #f0fff6; border-color: #4dcb8a; color: #1a7a45; }
+  .ln5 { background: #fff0f3; border-color: #f47a8a; color: #b0182e; }
+  .loop-caption { font-size: 10.5px; color: #8b949e; text-align: center; margin-top: 5px; }
+
+  /* ── Input/Output detail table ── */
+  .io-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .io-table thead tr { background: #f7f8fa; border-bottom: 1.5px solid #e5e7eb; }
+  .io-table th { text-align: left; padding: 7px 10px; font-weight: 700; }
+  .io-table td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+  .io-table tr:last-child td { border-bottom: none; }
+  .tag-pill {
+    display: inline-block; font-size: 10px; padding: 1px 7px;
+    border-radius: 20px; font-weight: 600;
+  }
+
+  /* ── Workflow steps ── */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step { display: flex; gap: 12px; position: relative; }
+  .step:not(:last-child)::before {
+    content: ''; position: absolute; left: 15px; top: 34px;
+    width: 2px; height: calc(100% + 2px); background: #e5e7eb; z-index: 0;
+  }
+  .step-num {
+    width: 32px; height: 32px; min-width: 32px;
+    border-radius: 50%; background: #3b82d4; color: #fff;
+    font-weight: 700; font-size: 13px;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1; flex-shrink: 0; margin-top: 2px;
+  }
+  .step-body { padding-bottom: 18px; }
+  .step-title { font-weight: 700; font-size: 13px; }
+  .step-desc { font-size: 12px; color: #57606a; margin-top: 2px; }
+  .step-code {
+    display: inline-block; background: #f0f4ff;
+    border: 1px solid #b6c8f5; border-radius: 4px;
+    font-family: monospace; font-size: 11px; color: #3b5bdb;
+    padding: 1px 7px; margin-top: 4px;
+  }
+
+  /* ── File role table ── */
+  .file-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .file-table thead tr { background: #f7f8fa; border-bottom: 1.5px solid #e5e7eb; }
+  .file-table th { text-align: left; padding: 8px 10px; font-weight: 700; }
+  .file-table td { padding: 7px 10px; border-bottom: 1px solid #e5e7eb; }
+  .file-table tr:last-child td { border-bottom: none; }
+  .file-name { font-family: monospace; color: #3b5bdb; }
+
+  /* ── Footer ── */
+  .footer {
+    text-align: center; font-size: 11px; color: #8b949e;
+    border-top: 1px solid #e5e7eb; padding-top: 16px; margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>PM CoPartner</h1>
+  <p class="subtitle">Solution architecture — components, data flows, tool integrations, and end-to-end workflow for the 5 Claude-powered PM subagents.</p>
+
+  
+  <div class="section">
+    <div class="section-label">Layered System Architecture</div>
+
+    
+    <div class="layer-row">
+      <div class="layer-tag">Actor</div>
+      <div class="layer-content">
+        <div class="pm-box">
+          <div class="pm-icon">👤</div>
+          <div>
+            <div class="pm-label">Product Manager</div>
+            <div class="pm-sub">Provides raw inputs — interview notes, backlog items, metrics, feature requests, sprint output</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="arrow-col">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+    <div class="arrow-label-row">
+      <div class="arrow-label">Choose agent → open prompt.md → paste input → run</div>
+    </div>
+    <div class="arrow-col" style="margin-top:0">
+      <div class="arrow-line" style="height:6px"></div>
+    </div>
+
+    
+    <div class="layer-row" style="margin-top:4px">
+      <div class="layer-tag">AI Engine</div>
+      <div class="layer-content">
+        <div class="claude-box">
+          <div class="claude-header">
+            Claude (Anthropic)
+            <span class="claude-badge">5 Subagents</span>
+          </div>
+
+          <div class="agents-grid">
+            <div class="agent-card a1">
+              <span class="num">01</span>
+              <span class="name">Discovery</span>
+              <div class="io">
+                <b>In:</b> Interview notes<br />
+                <b>Out:</b> Insight report
+              </div>
+              <span class="badge">Per sprint</span>
+            </div>
+            <div class="agent-card a2">
+              <span class="num">02</span>
+              <span class="name">Planning</span>
+              <div class="io">
+                <b>In:</b> Backlog + OKR<br />
+                <b>Out:</b> Ranked brief
+              </div>
+              <span class="badge">Weekly</span>
+            </div>
+            <div class="agent-card a3">
+              <span class="num">03</span>
+              <span class="name">Specs</span>
+              <div class="io">
+                <b>In:</b> Feature request<br />
+                <b>Out:</b> PRD draft
+              </div>
+              <span class="badge">Always on</span>
+            </div>
+            <div class="agent-card a4">
+              <span class="num">04</span>
+              <span class="name">Analytics</span>
+              <div class="io">
+                <b>In:</b> Metrics + targets<br />
+                <b>Out:</b> RAG digest
+              </div>
+              <span class="badge">Weekly</span>
+            </div>
+            <div class="agent-card a5">
+              <span class="num">05</span>
+              <span class="name">Launch</span>
+              <div class="io">
+                <b>In:</b> Sprint output<br />
+                <b>Out:</b> Release notes
+              </div>
+              <span class="badge">Per release</span>
+            </div>
+          </div>
+
+          
+          <div class="prompt-row">
+            <div class="prompt-chip">01/prompt.md</div>
+            <div class="prompt-chip">02/prompt.md</div>
+            <div class="prompt-chip">03/prompt.md</div>
+            <div class="prompt-chip">04/prompt.md</div>
+            <div class="prompt-chip">05/prompt.md</div>
+          </div>
+
+          
+          <div class="run-paths">
+            <div class="run-path">
+              <div class="rp-title">Option A — Manual</div>
+              <div class="rp-desc">Copy prompt → paste into Claude Desktop or claude.ai → fill brackets → run</div>
+            </div>
+            <div class="run-path">
+              <div class="rp-title">Option B — Connected</div>
+              <div class="rp-desc">MCP integrations pull data automatically; save instruction writes output back</div>
+            </div>
+            <div class="run-path">
+              <div class="rp-title">Option C — Scheduled</div>
+              <div class="rp-desc">Claude /schedule or cron + API; fully automated end-to-end on a set cadence</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="arrow-col" style="margin-top:6px">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+    <div class="arrow-label-row">
+      <div class="arrow-label">reads from (optional, via MCP)  /  writes to (optional, via MCP)</div>
+    </div>
+    <div class="arrow-col" style="margin-top:0">
+      <div class="arrow-line" style="height:6px"></div>
+    </div>
+
+    
+    <div class="layer-row" style="margin-top:4px">
+      <div class="layer-tag">Integrations</div>
+      <div class="layer-content">
+        <div class="tools-grid">
+          <div class="tool-card">
+            <div class="tname">Notion</div>
+            <div class="tdesc">Notes, OKRs, KPI targets, PRD database, digests, tone-of-voice docs</div>
+            <div class="used-by">
+              <span class="dot d1">1</span>
+              <span class="dot d2">2</span>
+              <span class="dot d3">3</span>
+              <span class="dot d4">4</span>
+              <span class="dot d5">5</span>
+            </div>
+          </div>
+          <div class="tool-card">
+            <div class="tname">Linear / Jira</div>
+            <div class="tdesc">Backlog items, sprint tickets, closed issues, new feature requests</div>
+            <div class="used-by">
+              <span class="dot d1">1</span>
+              <span class="dot d2">2</span>
+              <span class="dot d3">3</span>
+              <span class="dot d5">5</span>
+            </div>
+          </div>
+          <div class="tool-card">
+            <div class="tname">Google Drive</div>
+            <div class="tdesc">Research docs, analytics CSV exports, saved reports and release notes</div>
+            <div class="used-by">
+              <span class="dot d1">1</span>
+              <span class="dot d4">4</span>
+              <span class="dot d5">5</span>
+            </div>
+          </div>
+          <div class="tool-card">
+            <div class="tname">Slack</div>
+            <div class="tdesc">Feature request channel (#feature-requests), metrics digest posts, notifications</div>
+            <div class="used-by">
+              <span class="dot d3">3</span>
+              <span class="dot d4">4</span>
+            </div>
+          </div>
+          <div class="tool-card">
+            <div class="tname">Gmail</div>
+            <div class="tdesc">Inbound feature requests via email, release note distribution to mailing lists</div>
+            <div class="used-by">
+              <span class="dot d3">3</span>
+              <span class="dot d5">5</span>
+            </div>
+          </div>
+          <div class="tool-card">
+            <div class="tname">Excel / Sheets / CSV</div>
+            <div class="tdesc">Backlog lists, analytics exports, prioritisation output tables</div>
+            <div class="used-by">
+              <span class="dot d2">2</span>
+              <span class="dot d4">4</span>
+            </div>
+          </div>
+        </div>
+        <div class="fallback-note">
+          <strong>Zero integrations required.</strong> Every agent works by copy-paste alone. The numbered dots show which agents <em>can</em> connect to each tool — not that they <em>must</em>. Paste notes, tickets, or numbers directly and the agent handles the rest.
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="arrow-col" style="margin-top:6px">
+      <div class="arrow-line"></div>
+      <div class="arrow-head"></div>
+    </div>
+    <div class="arrow-label-row">
+      <div class="arrow-label">structured documents returned to PM (or auto-saved via MCP)</div>
+    </div>
+    <div class="arrow-col" style="margin-top:0">
+      <div class="arrow-line" style="height:6px"></div>
+    </div>
+
+    
+    <div class="layer-row" style="margin-top:4px">
+      <div class="layer-tag">Outputs</div>
+      <div class="layer-content">
+        <div class="output-grid">
+          <div class="out-card">
+            <div class="oid">01 Discovery</div>
+            <div class="olabel">Insight Report</div>
+            <div class="odest">Themes · Quotes · Ranked opportunities · Next steps</div>
+          </div>
+          <div class="out-card">
+            <div class="oid">02 Planning</div>
+            <div class="olabel">Prioritisation Brief</div>
+            <div class="odest">Scored ranking · Rationale · Quick wins · Parking lot</div>
+          </div>
+          <div class="out-card">
+            <div class="oid">03 Specs</div>
+            <div class="olabel">PRD Draft</div>
+            <div class="odest">Problem · Scope · Metrics · Open questions</div>
+          </div>
+          <div class="out-card">
+            <div class="oid">04 Analytics</div>
+            <div class="olabel">Metrics Digest</div>
+            <div class="odest">RAG status · Top movers · Actions per red metric</div>
+          </div>
+          <div class="out-card">
+            <div class="oid">05 Launch</div>
+            <div class="olabel">Release Notes</div>
+            <div class="odest">User-facing · Brand voice · Features + bug fixes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  
+  <div class="section">
+    <div class="section-label">The PM Product Loop — How the Agents Connect</div>
+    <p style="font-size:12px;color:#57606a;margin-bottom:10px">
+      The 5 agents mirror the natural PM work cycle. Each agent's output feeds the next stage — and after launch, new user feedback restarts the loop at Discovery.
+    </p>
+    <div class="loop-row">
+      <div class="loop-node ln1">
+        <div class="larrow">›</div>
+        01 Discovery<span class="lsub">Insight report</span>
+      </div>
+      <div class="loop-node ln2">
+        <div class="larrow">›</div>
+        02 Planning<span class="lsub">Ranked backlog</span>
+      </div>
+      <div class="loop-node ln3">
+        <div class="larrow">›</div>
+        03 Specs<span class="lsub">PRD drafts</span>
+      </div>
+      <div class="loop-node ln4">
+        <div class="larrow">›</div>
+        04 Analytics<span class="lsub">Metrics digest</span>
+      </div>
+      <div class="loop-node ln5">
+        05 Launch<span class="lsub">Release notes</span>
+      </div>
+    </div>
+    <div class="loop-caption">After launch → new user feedback → back to 01 Discovery → loop repeats</div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-label">Agent Input / Output Reference</div>
+    <table class="io-table">
+      <thead>
+        <tr>
+          <th style="width:8%">#</th>
+          <th style="width:13%">Agent</th>
+          <th style="width:24%">Input (any format)</th>
+          <th style="width:28%">Output</th>
+          <th style="width:14%">Cadence</th>
+          <th style="width:13%">Primary tools</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight:800;color:#c96a00">01</td>
+          <td style="font-weight:600">Discovery</td>
+          <td style="color:#57606a">Raw interview notes — transcripts, bullet jottings, voice note text</td>
+          <td style="color:#57606a">Themes + quotes, ranked opportunity areas, contradictions, next steps</td>
+          <td><span class="tag-pill" style="background:#fff0de;color:#c96a00">Per sprint</span></td>
+          <td style="color:#57606a;font-size:11px">Notion, Drive, Linear</td>
+        </tr>
+        <tr>
+          <td style="font-weight:800;color:#0068b2">02</td>
+          <td style="font-weight:600">Planning</td>
+          <td style="color:#57606a">Backlog list + one-sentence OKR or goal statement</td>
+          <td style="color:#57606a">Scored + ranked table, quick wins, parking lot, confidence flags</td>
+          <td><span class="tag-pill" style="background:#e0f2ff;color:#0068b2">Weekly</span></td>
+          <td style="color:#57606a;font-size:11px">Linear, Jira, Notion, Sheets</td>
+        </tr>
+        <tr>
+          <td style="font-weight:800;color:#6228d7">03</td>
+          <td style="font-weight:600">Specs</td>
+          <td style="color:#57606a">Feature request — Slack msg, email, ticket title, or one sentence</td>
+          <td style="color:#57606a">Full PRD: problem, users, metrics, scope, non-goals, open questions</td>
+          <td><span class="tag-pill" style="background:#ede8ff;color:#6228d7">Always on</span></td>
+          <td style="color:#57606a;font-size:11px">Slack, Gmail, Jira, Linear, Notion</td>
+        </tr>
+        <tr>
+          <td style="font-weight:800;color:#1a7a45">04</td>
+          <td style="font-weight:600">Analytics</td>
+          <td style="color:#57606a">This week's metrics + targets — paste, CSV, or numbers from any tool</td>
+          <td style="color:#57606a">RAG table, top movers, recommended action per red metric, exec summary</td>
+          <td><span class="tag-pill" style="background:#e0ffed;color:#1a7a45">Weekly</span></td>
+          <td style="color:#57606a;font-size:11px">Notion, Drive, Slack, Sheets</td>
+        </tr>
+        <tr>
+          <td style="font-weight:800;color:#b0182e">05</td>
+          <td style="font-weight:600">Launch</td>
+          <td style="color:#57606a">Closed sprint tickets or bullet list of shipped items + optional brand voice</td>
+          <td style="color:#57606a">User-facing release notes: new features, bug fixes, formatted for any channel</td>
+          <td><span class="tag-pill" style="background:#ffe0e5;color:#b0182e">Per release</span></td>
+          <td style="color:#57606a;font-size:11px">Linear, Jira, Notion, Drive, Gmail</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-label">Step-by-Step: How to Run Any Agent</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="step-title">Choose your agent</div>
+          <div class="step-desc">Open the folder for the workflow you need — e.g. <span class="step-code">01-discovery/</span> after a round of user interviews, or <span class="step-code">04-analytics/</span> on Monday morning.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="step-title">Read setup.md once</div>
+          <div class="step-desc">Decide your path: <strong>Minimal</strong> (paste data into Claude — zero setup) or <strong>Connected</strong> (MCP integrations for auto pull/push). You only do this once per agent.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="step-title">Open prompt.md and copy the full prompt</div>
+          <div class="step-desc">Each prompt is self-contained and ready to use. Paste it into Claude Desktop or claude.ai.</div>
+          <div class="step-code">prompt.md → select all → copy</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="step-title">Fill the [bracket] placeholders</div>
+          <div class="step-desc">Replace <span class="step-code">[PASTE YOUR NOTES HERE]</span> with your actual data. Delete the input options you're not using. The fewer brackets left, the better the output.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="step-title">Run Claude</div>
+          <div class="step-desc">Send the message. Claude processes the input and returns a structured document — insight report, ranked backlog, PRD, metrics digest, or release notes.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="step-title">Save or route the output</div>
+          <div class="step-desc">Copy to Notion, Google Docs, email, Slack, or save as a file. If you included a save instruction in the prompt (MCP path), this happens automatically.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">7</div>
+        <div class="step-body" style="padding-bottom:0">
+          <div class="step-title">(Optional) Automate with /schedule</div>
+          <div class="step-desc">In Claude Desktop, type <span class="step-code">/schedule</span> after your prompt to set a recurring run. Recommended cadence: Planning + Analytics weekly, Specs always-on, Launch per release.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-label">What Each File Does in an Agent Folder</div>
+    <table class="file-table">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Purpose</th>
+          <th>Read by</th>
+          <th>Frequency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="file-name">README.md</td>
+          <td style="color:#57606a">What the agent does, when to run it, output format, minimum requirements, integration overview</td>
+          <td style="color:#57606a">PM — first time</td>
+          <td style="color:#57606a">Once</td>
+        </tr>
+        <tr>
+          <td class="file-name">prompt.md</td>
+          <td style="color:#57606a">The full Claude prompt with [bracket] placeholders. Copy → paste → fill → run. Contains tips for variations.</td>
+          <td style="color:#57606a">PM — every run</td>
+          <td style="color:#57606a">Every run</td>
+        </tr>
+        <tr>
+          <td class="file-name">setup.md</td>
+          <td style="color:#57606a">Minimal path (no tools), connected path (MCP servers + exact prompt additions), scheduler setup, tool alternatives table</td>
+          <td style="color:#57606a">PM — setup only</td>
+          <td style="color:#57606a">Once at setup</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  
+  <div class="section">
+    <div class="section-label">Repository Structure</div>
+    <div style="background:#f7f8fa;border:1px solid #e5e7eb;border-radius:8px;padding:14px 18px;font-family:monospace;font-size:12px;color:#1f2328;line-height:1.9">
+      <span style="color:#3b82d4;font-weight:700">pm-copartner/</span><br />
+      ├── <span style="color:#57606a">README.md</span>            <span style="color:#8b949e">← Project overview + usage guide</span><br />
+      ├── <span style="color:#57606a">CONTRIBUTING.md</span>     <span style="color:#8b949e">← How to add agents or improve prompts</span><br />
+      ├── <span style="color:#c96a00;font-weight:700">01-discovery/</span><br />
+      │   ├── README.md       <span style="color:#8b949e">← Agent description + output spec</span><br />
+      │   ├── prompt.md       <span style="color:#8b949e">← Paste into Claude → run</span><br />
+      │   └── setup.md        <span style="color:#8b949e">← Tool connections + fallbacks</span><br />
+      ├── <span style="color:#0068b2;font-weight:700">02-planning/</span><br />
+      │   ├── README.md · prompt.md · setup.md<br />
+      ├── <span style="color:#6228d7;font-weight:700">03-specs/</span><br />
+      │   ├── README.md · prompt.md · setup.md<br />
+      ├── <span style="color:#1a7a45;font-weight:700">04-analytics/</span><br />
+      │   ├── README.md · prompt.md · setup.md<br />
+      └── <span style="color:#b0182e;font-weight:700">05-launch/</span><br />
+           ├── README.md · prompt.md · setup.md
+    </div>
+  </div>
+
+  <div class="footer">Made with IBM Bob</div>
+</div>
+</body>
+</html>

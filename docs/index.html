@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PM CoPartner — AI Agents for Product Managers</title>
+<meta name="description" content="5 Claude-powered AI agents for Product Managers. Discovery, Planning, Specs, Analytics, and Launch — free, open-source, zero setup required."/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
+    font-size: 15px; line-height: 1.6;
+    background: #ffffff; color: #1f2328;
+  }
+  a { color: #3b82d4; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* NAV */
+  nav {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0 24px;
+    display: flex; align-items: center; gap: 24px;
+    height: 52px; position: sticky; top: 0;
+    background: #fff; z-index: 100;
+  }
+  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  .nav-logo:hover { text-decoration: none; }
+  .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .nav-links a { font-size: 13px; color: #57606a; }
+  .nav-links a:hover { color: #1f2328; text-decoration: none; }
+  .nav-right { margin-left: auto; }
+  .nav-right a {
+    font-size: 13px; font-weight: 600;
+    background: #1f2328; color: #fff;
+    padding: 6px 14px; border-radius: 6px;
+  }
+  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
+
+  /* HERO */
+  .hero {
+    max-width: 700px; margin: 0 auto;
+    padding: 72px 24px 60px;
+    text-align: center;
+  }
+  .hero-tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #3b82d4;
+    border: 1px solid #c3dafe; border-radius: 20px;
+    padding: 3px 12px; margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: 34px; font-weight: 800; line-height: 1.2;
+    margin-bottom: 16px; color: #1f2328;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 16px; color: #57606a;
+    max-width: 520px; margin: 0 auto 32px;
+  }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: #1f2328; color: #fff;
+    padding: 11px 22px; border-radius: 8px;
+    font-weight: 600; font-size: 14px;
+  }
+  .btn-primary:hover { background: #3b82d4; text-decoration: none; }
+  .btn-secondary {
+    background: #f7f8fa; color: #1f2328;
+    border: 1px solid #e5e7eb;
+    padding: 11px 22px; border-radius: 8px;
+    font-weight: 600; font-size: 14px;
+  }
+  .btn-secondary:hover { background: #e5e7eb; text-decoration: none; }
+
+  /* TAGLINE ROW */
+  .tagline-row {
+    display: flex; justify-content: center; gap: 28px;
+    flex-wrap: wrap; margin-top: 28px;
+    font-size: 12.5px; color: #57606a;
+  }
+  .tagline-row span { display: flex; align-items: center; gap: 5px; }
+
+  /* AGENTS GRID */
+  .agents-section {
+    max-width: 820px; margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: #57606a;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 8px; margin-bottom: 24px;
+    text-align: center;
+  }
+  .agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .agent-card {
+    border: 1px solid #e5e7eb; border-radius: 10px;
+    padding: 20px; background: #fff;
+    transition: border-color 0.15s;
+    display: flex; flex-direction: column;
+  }
+  .agent-card:hover { border-color: #3b82d4; text-decoration: none; }
+  .agent-num {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #1f2328; color: #fff;
+    font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 12px; flex-shrink: 0;
+  }
+  .agent-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #1f2328; }
+  .agent-card p { font-size: 12.5px; color: #57606a; flex: 1; margin-bottom: 14px; }
+  .agent-when {
+    font-size: 11px; color: #8b949e;
+    border-top: 1px solid #f0f1f3; padding-top: 10px; margin-top: auto;
+  }
+  .agent-when strong { color: #57606a; }
+
+  /* HOW IT WORKS */
+  .how-section {
+    background: #f7f8fa;
+    border-top: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 60px 24px;
+  }
+  .how-inner { max-width: 700px; margin: 0 auto; }
+  .how-inner h2 {
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 32px; text-align: center;
+  }
+  .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+  .step { text-align: center; padding: 0 8px; }
+  .step-num {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: #3b82d4; color: #fff;
+    font-weight: 700; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .step h4 { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
+  .step p { font-size: 12px; color: #57606a; }
+
+  /* NO SETUP */
+  .zero-section {
+    max-width: 700px; margin: 0 auto;
+    padding: 60px 24px;
+    text-align: center;
+  }
+  .zero-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+  .zero-section p { font-size: 14px; color: #57606a; margin-bottom: 28px; }
+  .tool-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .chip {
+    font-size: 12px; background: #f7f8fa;
+    border: 1px solid #e5e7eb; border-radius: 20px;
+    padding: 4px 12px; color: #57606a;
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid #e5e7eb;
+    padding: 24px;
+    text-align: center; font-size: 12px; color: #8b949e;
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  }
+  footer a { color: #8b949e; }
+  footer a:hover { color: #1f2328; }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <div class="nav-links">
+    <a href="01-discovery.html">Discovery</a>
+    <a href="02-planning.html">Planning</a>
+    <a href="03-specs.html">Specs</a>
+    <a href="04-analytics.html">Analytics</a>
+    <a href="05-launch.html">Launch</a>
+  </div>
+  <div class="nav-right">
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-tag">Open Source · Free · No Setup Required</div>
+  <h1>AI agents built<br/>for Product Managers</h1>
+  <p>5 Claude-powered agents that handle your most time-consuming PM workflows — from user research to release notes.</p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="01-discovery.html">Explore the agents</a>
+    <a class="btn-secondary" href="https://github.com/alihabbache/pm-copartner" target="_blank">View on GitHub</a>
+  </div>
+  <div class="tagline-row">
+    <span>✓ No account needed</span>
+    <span>✓ Works with Claude.ai (free)</span>
+    <span>✓ Copy-paste in 30 seconds</span>
+    <span>✓ MIT licensed</span>
+  </div>
+</section>
+
+<section class="agents-section">
+  <div class="section-label">The 5 Agents</div>
+  <div class="agent-grid">
+    <a class="agent-card" href="01-discovery.html">
+      <div class="agent-num">01</div>
+      <h3>Discovery</h3>
+      <p>Turns raw user interview notes into a structured insight report — themes, quotes, and ranked opportunities.</p>
+      <div class="agent-when"><strong>Run when:</strong> After research sprints, before planning</div>
+    </a>
+    <a class="agent-card" href="02-planning.html">
+      <div class="agent-num">02</div>
+      <h3>Planning</h3>
+      <p>Scores and ranks your backlog against your OKRs. Every item gets a score and a one-line rationale.</p>
+      <div class="agent-when"><strong>Run when:</strong> Weekly before sprint planning</div>
+    </a>
+    <a class="agent-card" href="03-specs.html">
+      <div class="agent-num">03</div>
+      <h3>Specs</h3>
+      <p>Auto-drafts a PRD from any feature request — even a single sentence. Flags every gap as an open question.</p>
+      <div class="agent-when"><strong>Run when:</strong> On demand, any new request</div>
+    </a>
+    <a class="agent-card" href="04-analytics.html">
+      <div class="agent-num">04</div>
+      <h3>Analytics</h3>
+      <p>Compares your metrics to targets, assigns RAG status, surfaces top movers, and recommends actions.</p>
+      <div class="agent-when"><strong>Run when:</strong> Weekly Monday or Friday EOD</div>
+    </a>
+    <a class="agent-card" href="05-launch.html">
+      <div class="agent-num">05</div>
+      <h3>Launch</h3>
+      <p>Writes user-facing release notes from your sprint output — in your brand voice, for your audience.</p>
+      <div class="agent-when"><strong>Run when:</strong> Per sprint close / per release</div>
+    </a>
+  </div>
+</section>
+
+<section class="how-section">
+  <div class="how-inner">
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <h4>Pick an agent</h4>
+        <p>Choose the workflow that matches your current task.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Copy the prompt</h4>
+        <p>One click. The full prompt is ready to paste into Claude.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <h4>Add your data</h4>
+        <p>Paste your notes, tickets, or metrics where indicated.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <h4>Get structured output</h4>
+        <p>A ready-to-use report, PRD, or digest — in seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="zero-section">
+  <h2>Zero hard dependencies</h2>
+  <p>Every agent works with plain copy-paste. Connect your tools for automation — or don't. It works either way.</p>
+  <div class="tool-chips">
+    <span class="chip">Notion</span>
+    <span class="chip">Linear</span>
+    <span class="chip">Jira</span>
+    <span class="chip">Google Drive</span>
+    <span class="chip">Slack</span>
+    <span class="chip">Gmail</span>
+    <span class="chip">Plain text</span>
+    <span class="chip">CSV files</span>
+    <span class="chip">Bullet points</span>
+  </div>
+</section>
+
+<footer>
+  <span>PM CoPartner — MIT License</span>
+  <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
+  <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
+  <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+name: "✨ New Agent Proposal"
+description: "Propose a new PM workflow agent that doesn't exist yet."
+title: "[New Agent] <workflow name>"
+labels: ["new-agent"]
+body:
+  - type: textarea
+    id: what-it-does
+    attributes:
+      label: What does this agent do?
+      description: Describe the workflow in 2–4 sentences. What does the PM input? What does the agent produce?
+      placeholder: "e.g. Takes a set of customer support tickets and identifies the top recurring product pain points with frequency counts and severity estimates."
+    validations:
+      required: true
+
+  - type: textarea
+    id: when-to-run
+    attributes:
+      label: When would a PM run this?
+      placeholder: "e.g. Weekly, before a support review. Or on demand after a spike in support volume."
+    validations:
+      required: true
+
+  - type: textarea
+    id: tools
+    attributes:
+      label: What tools does it connect to?
+      description: List the tools. Make sure there's a fallback path that requires no tools.
+      placeholder: "e.g. Intercom or Zendesk for input; Notion or plain paste as fallback."
+    validations:
+      required: true
+
+  - type: textarea
+    id: output
+    attributes:
+      label: What does the output look like?
+      description: Describe or sketch the output format.
+      placeholder: "e.g. A ranked table of pain points with frequency, sample quotes, and a suggested owner."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: This workflow has a meaningful fallback path (works with just copy-paste, no tools required)
+          required: true
+        - label: This is genuinely useful for product managers, not just a generic writing task
+          required: true
+        - label: I'm willing to help write or review the prompt if this gets approved

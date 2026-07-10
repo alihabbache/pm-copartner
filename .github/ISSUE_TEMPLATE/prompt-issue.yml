@@ -1,0 +1,47 @@
+name: "🐛 Prompt Issue"
+description: "A prompt didn't produce the expected output, or produced something incorrect."
+title: "[Prompt Issue] <agent name> — <short description>"
+labels: ["prompt-issue"]
+body:
+  - type: dropdown
+    id: agent
+    attributes:
+      label: Which agent?
+      options:
+        - 01 — Discovery
+        - 02 — Planning
+        - 03 — Specs
+        - 04 — Analytics
+        - 05 — Launch
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did the agent produce that was wrong or unhelpful?
+      placeholder: "e.g. The PRD output skipped the 'Out of Scope' section entirely."
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+      placeholder: "e.g. I expected a full PRD with all sections including Out of Scope."
+    validations:
+      required: true
+
+  - type: textarea
+    id: input
+    attributes:
+      label: What input did you use?
+      description: Paste an anonymised version of your input (remove any real names, company names, or sensitive data).
+      placeholder: "e.g. Feature request: 'Users want to export their data'"
+
+  - type: textarea
+    id: fix
+    attributes:
+      label: Suggested fix (optional)
+      description: If you have an idea for how the prompt should be changed, add it here.
