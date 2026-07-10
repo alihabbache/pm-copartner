@@ -7,173 +7,276 @@
 <meta name="description" content="5 Claude-powered AI agents for Product Managers. Discovery, Planning, Specs, Analytics, and Launch — free, open-source, zero setup required."/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #111827;
+    --ink-2:     #374151;
+    --ink-3:     #6b7280;
+    --ink-4:     #9ca3af;
+    --border:    #e5e7eb;
+    --surface:   #f9fafb;
+    --white:     #ffffff;
+    --teal:      #0d9488;
+    --teal-lt:   #ccfbf1;
+    --teal-mid:  #14b8a6;
+    --radius:    10px;
+  }
+
+  html { scroll-behavior: smooth; }
+
   body {
     font-family: -apple-system, "Segoe UI", system-ui, sans-serif;
     font-size: 15px; line-height: 1.6;
-    background: #ffffff; color: #1f2328;
+    background: var(--white); color: var(--ink);
   }
-  a { color: #3b82d4; text-decoration: none; }
+
+  a { color: var(--teal); text-decoration: none; }
   a:hover { text-decoration: underline; }
 
-  /* NAV */
+  /* ── NAV ── */
   nav {
-    border-bottom: 1px solid #e5e7eb;
-    padding: 0 24px;
-    display: flex; align-items: center; gap: 24px;
-    height: 52px; position: sticky; top: 0;
-    background: #fff; z-index: 100;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex; align-items: center; gap: 28px;
+    height: 54px; position: sticky; top: 0;
+    background: rgba(255,255,255,0.96);
+    backdrop-filter: blur(10px);
+    z-index: 100;
   }
-  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  .nav-logo {
+    font-weight: 800; font-size: 14.5px; color: var(--ink);
+    letter-spacing: -0.3px; flex-shrink: 0;
+    display: flex; align-items: center; gap: 7px;
+  }
   .nav-logo:hover { text-decoration: none; }
+  .nav-logo-mark {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: var(--teal); display: inline-flex;
+    align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .nav-logo-mark svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
   .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .nav-links a { font-size: 13px; color: #57606a; }
-  .nav-links a:hover { color: #1f2328; text-decoration: none; }
+  .nav-links a { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
   .nav-right { margin-left: auto; }
   .nav-right a {
-    font-size: 13px; font-weight: 600;
-    background: #1f2328; color: #fff;
-    padding: 6px 14px; border-radius: 6px;
+    font-size: 12.5px; font-weight: 600;
+    border: 1.5px solid var(--border);
+    color: var(--ink-2);
+    padding: 5px 15px; border-radius: 7px;
   }
-  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
+  .nav-right a:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
 
-  /* HERO */
+  /* ── HERO ── */
   .hero {
-    max-width: 700px; margin: 0 auto;
-    padding: 72px 24px 60px;
+    max-width: 720px; margin: 0 auto;
+    padding: 72px 24px 56px;
     text-align: center;
   }
   .hero-tag {
     display: inline-block;
     font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #3b82d4;
-    border: 1px solid #c3dafe; border-radius: 20px;
-    padding: 3px 12px; margin-bottom: 20px;
+    text-transform: uppercase; color: var(--teal);
+    background: var(--teal-lt);
+    border-radius: 20px; padding: 4px 14px; margin-bottom: 26px;
   }
   .hero h1 {
-    font-size: 34px; font-weight: 800; line-height: 1.2;
-    margin-bottom: 16px; color: #1f2328;
-    letter-spacing: -0.5px;
+    font-size: 44px; font-weight: 800; line-height: 1.1;
+    letter-spacing: -1.2px; margin-bottom: 18px; color: var(--ink);
   }
-  .hero p {
-    font-size: 16px; color: #57606a;
-    max-width: 520px; margin: 0 auto 32px;
+  .hero h1 span {
+    color: var(--teal);
+    text-decoration: underline;
+    text-decoration-color: var(--teal-lt);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
   }
-  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .hero-sub {
+    font-size: 16px; color: var(--ink-3); line-height: 1.75;
+    max-width: 520px; margin: 0 auto 36px;
+  }
+  .hero-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
   .btn-primary {
-    background: #1f2328; color: #fff;
-    padding: 11px 22px; border-radius: 8px;
-    font-weight: 600; font-size: 14px;
+    background: var(--teal); color: #fff;
+    padding: 11px 22px; border-radius: var(--radius);
+    font-weight: 700; font-size: 13.5px; letter-spacing: 0.01em;
   }
-  .btn-primary:hover { background: #3b82d4; text-decoration: none; }
-  .btn-secondary {
-    background: #f7f8fa; color: #1f2328;
-    border: 1px solid #e5e7eb;
-    padding: 11px 22px; border-radius: 8px;
-    font-weight: 600; font-size: 14px;
+  .btn-primary:hover { background: #0f766e; text-decoration: none; }
+  .btn-ghost {
+    background: transparent; color: var(--ink-2);
+    border: 1.5px solid var(--border);
+    padding: 11px 22px; border-radius: var(--radius);
+    font-weight: 600; font-size: 13.5px;
   }
-  .btn-secondary:hover { background: #e5e7eb; text-decoration: none; }
+  .btn-ghost:hover { border-color: var(--ink-3); text-decoration: none; }
 
-  /* TAGLINE ROW */
-  .tagline-row {
-    display: flex; justify-content: center; gap: 28px;
+  .proof-strip {
+    display: flex; justify-content: center; gap: 20px;
     flex-wrap: wrap; margin-top: 28px;
-    font-size: 12.5px; color: #57606a;
+    font-size: 12px; color: var(--ink-4);
+    border-top: 1px solid var(--border); padding-top: 20px;
   }
-  .tagline-row span { display: flex; align-items: center; gap: 5px; }
+  .proof-strip span { display: flex; align-items: center; gap: 5px; }
+  .proof-strip .tick { color: var(--teal); font-size: 13px; }
 
-  /* AGENTS GRID */
-  .agents-section {
-    max-width: 820px; margin: 0 auto;
-    padding: 0 24px 80px;
+  /* ── WORKFLOW TABLE ── */
+  .workflow-section {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    padding: 56px 24px 64px;
   }
+  .workflow-inner { max-width: 900px; margin: 0 auto; }
   .section-label {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #57606a;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 8px; margin-bottom: 24px;
-    text-align: center;
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-4);
+    margin-bottom: 6px;
   }
-  .agent-grid {
+  .section-heading {
+    font-size: 23px; font-weight: 800; color: var(--ink);
+    letter-spacing: -0.4px; margin-bottom: 32px;
+  }
+
+  .workflow-table { width: 100%; border-collapse: collapse; }
+  .workflow-table thead th {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: var(--ink-4);
+    padding: 0 14px 10px; text-align: left;
+    border-bottom: 1.5px solid var(--border);
+  }
+  .workflow-table thead th:first-child { width: 200px; }
+  .workflow-table thead th:last-child { text-align: right; width: 130px; }
+
+  .workflow-row { border-bottom: 1px solid var(--border); }
+  .workflow-row:last-child { border-bottom: none; }
+  .workflow-row td { padding: 18px 14px; vertical-align: top; }
+
+  .wf-stage {
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .stage-pill {
+    display: inline-block;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; border-radius: 4px;
+    padding: 2px 7px; flex-shrink: 0; margin-top: 2px;
+  }
+  .stage-01 { background: #ede9fe; color: #6d28d9; }
+  .stage-02 { background: #fef3c7; color: #92400e; }
+  .stage-03 { background: #dbeafe; color: #1e40af; }
+  .stage-04 { background: #dcfce7; color: #166534; }
+  .stage-05 { background: #fce7f3; color: #9d174d; }
+
+  .wf-name {
+    font-weight: 700; font-size: 14px; color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .wf-sub { font-size: 12.5px; color: var(--ink-3); line-height: 1.5; }
+
+  .wf-desc { font-size: 13px; color: var(--ink-2); line-height: 1.6; }
+
+  .wf-cadence {
+    font-size: 12px; color: var(--ink-3);
+    text-align: right; padding-top: 2px;
+    font-weight: 500;
+  }
+  .wf-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 12px; font-weight: 600; color: var(--teal);
+    margin-top: 8px;
+  }
+  .wf-link:hover { text-decoration: none; opacity: 0.8; }
+
+  @media (max-width: 680px) {
+    .workflow-table thead { display: none; }
+    .workflow-row td { display: block; padding: 8px 14px; }
+    .workflow-row td:first-child { padding-top: 18px; }
+    .workflow-row td:last-child { padding-bottom: 16px; }
+    .wf-cadence { text-align: left; }
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how-section { max-width: 760px; margin: 0 auto; padding: 60px 24px; }
+  .how-steps {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 28px; margin-top: 32px;
   }
-  .agent-card {
-    border: 1px solid #e5e7eb; border-radius: 10px;
-    padding: 20px; background: #fff;
-    transition: border-color 0.15s;
-    display: flex; flex-direction: column;
+  .how-step { }
+  .how-step-num {
+    font-size: 28px; font-weight: 800; color: var(--teal);
+    line-height: 1; margin-bottom: 8px;
+    font-variant-numeric: tabular-nums;
   }
-  .agent-card:hover { border-color: #3b82d4; text-decoration: none; }
-  .agent-num {
-    width: 32px; height: 32px; border-radius: 8px;
-    background: #1f2328; color: #fff;
-    font-size: 12px; font-weight: 700;
-    display: flex; align-items: center; justify-content: center;
-    margin-bottom: 12px; flex-shrink: 0;
+  .how-step h4 {
+    font-size: 13.5px; font-weight: 700; color: var(--ink);
+    margin-bottom: 4px;
   }
-  .agent-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; color: #1f2328; }
-  .agent-card p { font-size: 12.5px; color: #57606a; flex: 1; margin-bottom: 14px; }
-  .agent-when {
-    font-size: 11px; color: #8b949e;
-    border-top: 1px solid #f0f1f3; padding-top: 10px; margin-top: auto;
-  }
-  .agent-when strong { color: #57606a; }
+  .how-step p { font-size: 12.5px; color: var(--ink-3); line-height: 1.55; }
 
-  /* HOW IT WORKS */
-  .how-section {
-    background: #f7f8fa;
-    border-top: 1px solid #e5e7eb;
-    border-bottom: 1px solid #e5e7eb;
-    padding: 60px 24px;
-  }
-  .how-inner { max-width: 700px; margin: 0 auto; }
-  .how-inner h2 {
-    font-size: 20px; font-weight: 700;
-    margin-bottom: 32px; text-align: center;
-  }
-  .steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
-  .step { text-align: center; padding: 0 8px; }
-  .step-num {
-    width: 36px; height: 36px; border-radius: 50%;
-    background: #3b82d4; color: #fff;
-    font-weight: 700; font-size: 14px;
-    display: flex; align-items: center; justify-content: center;
-    margin: 0 auto 12px;
-  }
-  .step h4 { font-size: 13px; font-weight: 700; margin-bottom: 5px; }
-  .step p { font-size: 12px; color: #57606a; }
-
-  /* NO SETUP */
-  .zero-section {
-    max-width: 700px; margin: 0 auto;
-    padding: 60px 24px;
+  /* ── TOOLS STRIP ── */
+  .tools-section {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 32px 24px;
     text-align: center;
   }
-  .zero-section h2 { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
-  .zero-section p { font-size: 14px; color: #57606a; margin-bottom: 28px; }
-  .tool-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-  .chip {
-    font-size: 12px; background: #f7f8fa;
-    border: 1px solid #e5e7eb; border-radius: 20px;
-    padding: 4px 12px; color: #57606a;
+  .tools-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-4);
+    margin-bottom: 14px;
+  }
+  .tools-row {
+    display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+  }
+  .tool-chip {
+    font-size: 12.5px; background: var(--white);
+    border: 1.5px solid var(--border); border-radius: 8px;
+    padding: 5px 14px; color: var(--ink-2); font-weight: 500;
   }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid #e5e7eb;
-    padding: 24px;
-    text-align: center; font-size: 12px; color: #8b949e;
-    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  /* ── AUTHOR STRIP ── */
+  .author-strip {
+    background: var(--ink); color: rgba(255,255,255,0.75);
+    padding: 44px 24px; text-align: center;
   }
-  footer a { color: #8b949e; }
-  footer a:hover { color: #1f2328; }
+  .author-strip p {
+    font-size: 14px; line-height: 1.8;
+    max-width: 500px; margin: 0 auto 14px;
+  }
+  .author-strip strong { color: #fff; }
+  .author-strip a { color: var(--teal-mid); }
+  .author-strip a:hover { color: #fff; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 22px 32px;
+    text-align: center;
+    font-size: 12px; color: var(--ink-4);
+    display: flex; justify-content: center; gap: 18px;
+    flex-wrap: wrap; align-items: center;
+  }
+  footer a { color: var(--ink-4); }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 30px; }
+    nav { padding: 0 16px; gap: 16px; }
+    .nav-links { display: none; }
+  }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-mark">
+      <svg viewBox="0 0 12 12"><polyline points="2,9 5,4 7,7 9,3"/></svg>
+    </span>
+    PM CoPartner
+  </a>
   <div class="nav-links">
     <a href="01-discovery.html">Discovery</a>
     <a href="02-planning.html">Planning</a>
@@ -182,108 +285,174 @@
     <a href="05-launch.html">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
 <section class="hero">
-  <div class="hero-tag">Open Source · Free · No Setup Required</div>
-  <h1>AI agents built<br/>for Product Managers</h1>
-  <p>5 Claude-powered agents that handle your most time-consuming PM workflows — from user research to release notes.</p>
+  <div class="hero-tag">Open source · Free · No setup required</div>
+  <h1>Stop writing.<br/>Start <span>deciding</span>.</h1>
+  <p class="hero-sub">Five Claude-powered agents that handle the PM grunt work — research synthesis, backlog scoring, PRD drafting, metrics digests, and release notes — so you ship faster.</p>
   <div class="hero-actions">
-    <a class="btn-primary" href="01-discovery.html">Explore the agents</a>
-    <a class="btn-secondary" href="https://github.com/alihabbache/pm-copartner" target="_blank">View on GitHub</a>
+    <a class="btn-primary" href="01-discovery.html">Browse the agents</a>
+    <a class="btn-ghost" href="https://github.com/alihabbache/pm-copartner" target="_blank">View on GitHub</a>
   </div>
-  <div class="tagline-row">
-    <span>✓ No account needed</span>
-    <span>✓ Works with Claude.ai (free)</span>
-    <span>✓ Copy-paste in 30 seconds</span>
-    <span>✓ MIT licensed</span>
+  <div class="proof-strip">
+    <span><span class="tick">✓</span> No account needed</span>
+    <span><span class="tick">✓</span> Works with Claude.ai free tier</span>
+    <span><span class="tick">✓</span> Copy-paste ready in 30 s</span>
+    <span><span class="tick">✓</span> MIT licensed</span>
   </div>
 </section>
 
-<section class="agents-section">
-  <div class="section-label">The 5 Agents</div>
-  <div class="agent-grid">
-    <a class="agent-card" href="01-discovery.html">
-      <div class="agent-num">01</div>
-      <h3>Discovery</h3>
-      <p>Turns raw user interview notes into a structured insight report — themes, quotes, and ranked opportunities.</p>
-      <div class="agent-when"><strong>Run when:</strong> After research sprints, before planning</div>
-    </a>
-    <a class="agent-card" href="02-planning.html">
-      <div class="agent-num">02</div>
-      <h3>Planning</h3>
-      <p>Scores and ranks your backlog against your OKRs. Every item gets a score and a one-line rationale.</p>
-      <div class="agent-when"><strong>Run when:</strong> Weekly before sprint planning</div>
-    </a>
-    <a class="agent-card" href="03-specs.html">
-      <div class="agent-num">03</div>
-      <h3>Specs</h3>
-      <p>Auto-drafts a PRD from any feature request — even a single sentence. Flags every gap as an open question.</p>
-      <div class="agent-when"><strong>Run when:</strong> On demand, any new request</div>
-    </a>
-    <a class="agent-card" href="04-analytics.html">
-      <div class="agent-num">04</div>
-      <h3>Analytics</h3>
-      <p>Compares your metrics to targets, assigns RAG status, surfaces top movers, and recommends actions.</p>
-      <div class="agent-when"><strong>Run when:</strong> Weekly Monday or Friday EOD</div>
-    </a>
-    <a class="agent-card" href="05-launch.html">
-      <div class="agent-num">05</div>
-      <h3>Launch</h3>
-      <p>Writes user-facing release notes from your sprint output — in your brand voice, for your audience.</p>
-      <div class="agent-when"><strong>Run when:</strong> Per sprint close / per release</div>
-    </a>
+<section class="workflow-section">
+  <div class="workflow-inner">
+    <div class="section-label">The five agents</div>
+    <div class="section-heading">One for every stage of your PM workflow</div>
+
+    <table class="workflow-table">
+      <thead>
+        <tr>
+          <th>Stage</th>
+          <th>What it does</th>
+          <th style="width:110px;">When to run</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="workflow-row">
+          <td>
+            <div class="wf-stage">
+              <span class="stage-pill stage-01">Research</span>
+              <div>
+                <div class="wf-name">Discovery</div>
+                <div class="wf-sub">User research synthesis</div>
+                <a class="wf-link" href="01-discovery.html">Open agent →</a>
+              </div>
+            </div>
+          </td>
+          <td><div class="wf-desc">Reads raw interview notes and produces a structured insight report — recurring themes, supporting quotes, and a ranked opportunity table.</div></td>
+          <td><div class="wf-cadence">After research sprints</div></td>
+        </tr>
+        <tr class="workflow-row">
+          <td>
+            <div class="wf-stage">
+              <span class="stage-pill stage-02">Strategy</span>
+              <div>
+                <div class="wf-name">Planning</div>
+                <div class="wf-sub">Roadmap prioritisation</div>
+                <a class="wf-link" href="02-planning.html">Open agent →</a>
+              </div>
+            </div>
+          </td>
+          <td><div class="wf-desc">Scores your entire backlog against your OKRs. Every item gets a weighted priority score and a one-line rationale — no more gut-feel rankings.</div></td>
+          <td><div class="wf-cadence">Weekly, before planning</div></td>
+        </tr>
+        <tr class="workflow-row">
+          <td>
+            <div class="wf-stage">
+              <span class="stage-pill stage-03">Delivery</span>
+              <div>
+                <div class="wf-name">Specs</div>
+                <div class="wf-sub">PRD auto-drafter</div>
+                <a class="wf-link" href="03-specs.html">Open agent →</a>
+              </div>
+            </div>
+          </td>
+          <td><div class="wf-desc">Drafts a complete PRD from any feature request — even a single Slack sentence. Every missing piece becomes a tracked open question.</div></td>
+          <td><div class="wf-cadence">On demand</div></td>
+        </tr>
+        <tr class="workflow-row">
+          <td>
+            <div class="wf-stage">
+              <span class="stage-pill stage-04">Metrics</span>
+              <div>
+                <div class="wf-name">Analytics</div>
+                <div class="wf-sub">Weekly metrics digest</div>
+                <a class="wf-link" href="04-analytics.html">Open agent →</a>
+              </div>
+            </div>
+          </td>
+          <td><div class="wf-desc">Benchmarks your KPIs against targets, assigns RAG status, surfaces top movers, and writes one specific action per red metric.</div></td>
+          <td><div class="wf-cadence">Weekly</div></td>
+        </tr>
+        <tr class="workflow-row">
+          <td>
+            <div class="wf-stage">
+              <span class="stage-pill stage-05">Launch</span>
+              <div>
+                <div class="wf-name">Launch</div>
+                <div class="wf-sub">Release notes generator</div>
+                <a class="wf-link" href="05-launch.html">Open agent →</a>
+              </div>
+            </div>
+          </td>
+          <td><div class="wf-desc">Reads closed sprint tickets and writes user-facing release notes in your brand voice — grouped by impact, ready to publish.</div></td>
+          <td><div class="wf-cadence">Per release</div></td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </section>
 
 <section class="how-section">
-  <div class="how-inner">
-    <h2>How it works</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h4>Pick an agent</h4>
-        <p>Choose the workflow that matches your current task.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h4>Copy the prompt</h4>
-        <p>One click. The full prompt is ready to paste into Claude.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h4>Add your data</h4>
-        <p>Paste your notes, tickets, or metrics where indicated.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h4>Get structured output</h4>
-        <p>A ready-to-use report, PRD, or digest — in seconds.</p>
-      </div>
+  <div class="section-label">How it works</div>
+  <div class="section-heading">From zero to output in under a minute</div>
+  <div class="how-steps">
+    <div class="how-step">
+      <div class="how-step-num">01</div>
+      <h4>Pick your agent</h4>
+      <p>Match the workflow to whatever PM task is in front of you right now.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">02</div>
+      <h4>Copy the prompt</h4>
+      <p>One click. The full system prompt is ready to paste into Claude.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">03</div>
+      <h4>Drop in your data</h4>
+      <p>Paste notes, tickets, or a CSV export anywhere the prompt shows brackets.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">04</div>
+      <h4>Get structured output</h4>
+      <p>A shareable report, PRD, or digest — ready in seconds, not hours.</p>
     </div>
   </div>
 </section>
 
-<section class="zero-section">
-  <h2>Zero hard dependencies</h2>
-  <p>Every agent works with plain copy-paste. Connect your tools for automation — or don't. It works either way.</p>
-  <div class="tool-chips">
-    <span class="chip">Notion</span>
-    <span class="chip">Linear</span>
-    <span class="chip">Jira</span>
-    <span class="chip">Google Drive</span>
-    <span class="chip">Slack</span>
-    <span class="chip">Gmail</span>
-    <span class="chip">Plain text</span>
-    <span class="chip">CSV files</span>
-    <span class="chip">Bullet points</span>
+<section class="tools-section">
+  <div class="tools-label">Works with your existing stack — or nothing at all</div>
+  <div class="tools-row">
+    <span class="tool-chip">Notion</span>
+    <span class="tool-chip">Linear</span>
+    <span class="tool-chip">Jira</span>
+    <span class="tool-chip">Google Drive</span>
+    <span class="tool-chip">Slack</span>
+    <span class="tool-chip">Gmail</span>
+    <span class="tool-chip">Mixpanel</span>
+    <span class="tool-chip">Google Analytics</span>
+    <span class="tool-chip">Plain text</span>
+    <span class="tool-chip">CSV files</span>
   </div>
 </section>
 
+<section class="author-strip">
+  <p>Built by <strong>Ali Habbache</strong> — product leader, open-source contributor, and the PM who got tired of spending Monday mornings writing things Claude can draft in 30 seconds.</p>
+  <p>
+    <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">LinkedIn</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">Star on GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contribute</a>
+  </p>
+</section>
+
 <footer>
-  <span>PM CoPartner — MIT License</span>
+  <span>PM CoPartner &mdash; MIT License</span>
+  <span>&middot;</span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>&middot;</span>
   <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
   <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
   <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>

@@ -3,65 +3,95 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Specs Agent — PM CoPartner</title>
-<meta name="description" content="Auto-draft a full PRD from any feature request — even a single sentence. Every gap becomes an open question."/>
+<title>Specs — PM CoPartner</title>
+<meta name="description" content="Auto-draft a full PRD from any feature request — even a single sentence. Every gap becomes a tracked open question."/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.6; background: #ffffff; color: #1f2328; }
-  a { color: #3b82d4; text-decoration: none; }
+  :root {
+    --ink: #111827; --ink-2: #374151; --ink-3: #6b7280; --ink-4: #9ca3af;
+    --border: #e5e7eb; --surface: #f9fafb; --white: #ffffff;
+    --teal: #0d9488; --teal-lt: #ccfbf1; --teal-mid: #14b8a6;
+    --stage-bg: #dbeafe; --stage-fg: #1e40af;
+    --radius: 10px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system,"Segoe UI",system-ui,sans-serif; font-size: 15px; line-height: 1.6; background: var(--white); color: var(--ink); }
+  a { color: var(--teal); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  nav { border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 52px; position: sticky; top: 0; background: #fff; z-index: 100; }
-  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  nav { border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; gap: 28px; height: 54px; position: sticky; top: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); z-index: 100; }
+  .nav-logo { font-weight: 800; font-size: 14.5px; color: var(--ink); letter-spacing: -0.3px; flex-shrink: 0; display: flex; align-items: center; gap: 7px; }
   .nav-logo:hover { text-decoration: none; }
+  .nav-logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .nav-logo-mark svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
   .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .nav-links a { font-size: 13px; color: #57606a; }
-  .nav-links a:hover { color: #1f2328; text-decoration: none; }
-  .nav-links a.active { color: #1f2328; font-weight: 600; }
+  .nav-links a { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-links a.active { color: var(--ink); font-weight: 700; }
   .nav-right { margin-left: auto; }
-  .nav-right a { font-size: 13px; font-weight: 600; background: #1f2328; color: #fff; padding: 6px 14px; border-radius: 6px; }
-  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
-  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
-  .breadcrumb { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
-  .breadcrumb a { color: #8b949e; }
-  .breadcrumb a:hover { color: #3b82d4; }
-  .agent-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
-  .agent-num-lg { width: 48px; height: 48px; border-radius: 10px; background: #1f2328; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
-  .agent-title p { font-size: 14px; color: #57606a; }
-  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-  .chip { font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; color: #57606a; }
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #57606a; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 18px; }
+  .nav-right a { font-size: 12.5px; font-weight: 600; border: 1.5px solid var(--border); color: var(--ink-2); padding: 5px 15px; border-radius: 7px; }
+  .nav-right a:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
+  .page-wrap { display: grid; grid-template-columns: 200px 1fr; max-width: 960px; margin: 0 auto; padding: 40px 24px 88px; gap: 48px; }
+  @media (max-width: 720px) { .page-wrap { grid-template-columns: 1fr; } .side-nav { display: none; } }
+  .side-nav { position: sticky; top: 74px; align-self: start; }
+  .side-nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 12px; }
+  .side-nav-list { list-style: none; }
+  .side-nav-list li { margin-bottom: 2px; }
+  .side-nav-list a { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-3); font-weight: 500; padding: 6px 10px; border-radius: 7px; border: 1.5px solid transparent; }
+  .side-nav-list a:hover { background: var(--surface); color: var(--ink); text-decoration: none; }
+  .side-nav-list a.active { background: var(--teal-lt); color: var(--teal); font-weight: 700; }
+  .side-nav-list .s-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
+  .s-01 { background: #ede9fe; color: #6d28d9; }
+  .s-02 { background: #fef3c7; color: #92400e; }
+  .s-03 { background: #dbeafe; color: #1e40af; }
+  .s-04 { background: #dcfce7; color: #166534; }
+  .s-05 { background: #fce7f3; color: #9d174d; }
+  .main { min-width: 0; }
+  .breadcrumb { font-size: 12px; color: var(--ink-4); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--ink-4); }
+  .breadcrumb a:hover { color: var(--teal); text-decoration: underline; }
+  .agent-header { margin-bottom: 36px; }
+  .agent-stage { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .stage-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 4px; padding: 3px 9px; background: var(--stage-bg); color: var(--stage-fg); }
+  .stage-seq { font-size: 12px; color: var(--ink-4); font-weight: 500; }
+  .agent-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.15; }
+  .agent-header p { font-size: 14px; color: var(--ink-2); line-height: 1.65; max-width: 560px; }
+  .meta-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-chip { font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--ink-3); }
+  .save-band { display: flex; align-items: center; gap: 10px; background: var(--teal-lt); border-radius: 8px; padding: 10px 16px; margin-bottom: 36px; font-size: 13px; color: var(--ink-2); }
+  .save-band strong { color: var(--teal); }
   .section { margin-bottom: 40px; }
-  p { margin-bottom: 10px; }
-  ul { padding-left: 20px; margin-bottom: 12px; }
-  li { margin-bottom: 5px; font-size: 13.5px; color: #1f2328; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 18px; }
   .prompt-wrap { position: relative; }
-  .prompt-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12.5px; line-height: 1.7; color: #1f2328; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
-  .copy-btn { position: absolute; top: 10px; right: 10px; background: #1f2328; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .copy-btn:hover { background: #3b82d4; }
-  .copy-btn.copied { background: #2d8a4e; }
-  .output-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.7; color: #57606a; white-space: pre-wrap; word-break: break-word; }
+  .prompt-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink); white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+  .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--teal); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .copy-btn:hover { background: #0f766e; }
+  .copy-btn.copied { background: #15803d; }
+  .output-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink-3); white-space: pre-wrap; word-break: break-word; }
   .tips-list { list-style: none; padding: 0; }
-  .tips-list li { padding: 10px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
-  .tips-list li strong { color: #1f2328; }
-  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  .setup-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; }
-  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .setup-card p, .setup-card li { font-size: 12.5px; color: #57606a; }
+  .tips-list li { padding: 12px 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+  .tips-list li strong { color: var(--ink); }
+  .caution-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .caution-box strong { color: #78350f; }
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .setup-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
   .setup-card ul { padding-left: 16px; }
-  .agent-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-  .agent-nav a { font-size: 12px; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 20px; color: #57606a; background: #fff; }
-  .agent-nav a:hover { border-color: #3b82d4; color: #3b82d4; text-decoration: none; }
-  .agent-nav a.active { background: #1f2328; color: #fff; border-color: #1f2328; }
-  footer { border-top: 1px solid #e5e7eb; padding: 24px; text-align: center; font-size: 12px; color: #8b949e; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-  footer a { color: #8b949e; }
-  footer a:hover { color: #1f2328; }
+  .setup-card li { font-size: 12.5px; color: var(--ink-2); margin-bottom: 5px; }
+  .setup-note { font-size: 12px; color: var(--ink-4); }
+  p { margin-bottom: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 22px 32px; text-align: center; font-size: 12px; color: var(--ink-4); display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; align-items: center; }
+  footer a { color: var(--ink-4); }
+  footer a:hover { color: var(--ink); }
+  @media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } nav { padding: 0 16px; gap: 16px; } .nav-links { display: none; } }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-mark"><svg viewBox="0 0 12 12"><polyline points="2,9 5,4 7,7 9,3"/></svg></span>
+    PM CoPartner
+  </a>
   <div class="nav-links">
     <a href="01-discovery.html">Discovery</a>
     <a href="02-planning.html">Planning</a>
@@ -70,172 +100,197 @@
     <a href="05-launch.html">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
-<div class="page">
-  <div class="breadcrumb"><a href="index.html">PM CoPartner</a> / Agent 03</div>
+<div class="page-wrap">
+  <aside class="side-nav">
+    <div class="side-nav-label">All agents</div>
+    <ul class="side-nav-list">
+      <li><a href="01-discovery.html"><span class="s-pill s-01">Research</span> Discovery</a></li>
+      <li><a href="02-planning.html"><span class="s-pill s-02">Strategy</span> Planning</a></li>
+      <li><a href="03-specs.html" class="active"><span class="s-pill s-03">Delivery</span> Specs</a></li>
+      <li><a href="04-analytics.html"><span class="s-pill s-04">Metrics</span> Analytics</a></li>
+      <li><a href="05-launch.html"><span class="s-pill s-05">Launch</span> Launch</a></li>
+    </ul>
+  </aside>
 
-  <div class="agent-header">
-    <div class="agent-num-lg">03</div>
-    <div class="agent-title">
+  <main class="main">
+    <div class="breadcrumb"><a href="index.html">PM CoPartner</a> &rsaquo; Specs</div>
+
+    <div class="agent-header">
+      <div class="agent-stage">
+        <span class="stage-badge">Delivery</span>
+        <span class="stage-seq">Agent 3 of 5</span>
+      </div>
       <h1>Specs</h1>
-      <p>Auto-draft a full PRD from any feature request — even a single sentence. Every gap becomes an open question.</p>
-      <div class="meta-chips">
-        <span class="chip">On demand</span>
-        <span class="chip">Always on</span>
-        <span class="chip">No setup required</span>
+      <p>Turn any feature request — even a single Slack message — into a structured first-draft PRD. Every missing detail surfaces as a tracked open question, ready for PM review.</p>
+      <div class="meta-row">
+        <span class="meta-chip">On demand</span>
+        <span class="meta-chip">Always on</span>
+        <span class="meta-chip">No setup required</span>
       </div>
     </div>
-  </div>
 
-  <div class="agent-nav">
-    <a href="01-discovery.html">01 Discovery</a>
-    <a href="02-planning.html">02 Planning</a>
-    <a href="03-specs.html" class="active">03 Specs</a>
-    <a href="04-analytics.html">04 Analytics</a>
-    <a href="05-launch.html">05 Launch</a>
-  </div>
+    <div class="save-band">
+      <strong>Time saved:</strong> ~45–90 min per PRD first draft — while also surfacing gaps you would have missed.
+    </div>
 
-  <div class="section">
-    <div class="section-label">Prompt — Copy &amp; Paste into Claude</div>
-    <div class="prompt-wrap">
-      <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
-      <div class="prompt-box" id="prompt-text">You are a product manager assistant. Your job is to take a raw feature request and turn it into a structured first-draft PRD that is ready for PM review.
+    <div class="section">
+      <div class="section-label">Prompt — copy &amp; paste into Claude</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
+        <div class="prompt-box" id="prompt-text">You are an experienced product manager assistant. Your job is to take a raw feature request and produce a structured first-draft PRD that is ready for PM review — without inventing information that was not provided.
 
 ## Your input
 
-[CHOOSE ONE — delete the others]
+[CHOOSE ONE — delete the option you are not using]
 
 **Option A — Paste the feature request:**
 Here is the feature request:
 ---
-[PASTE THE REQUEST HERE — a Slack message, email, ticket, meeting note, or even one sentence]
+[PASTE THE REQUEST HERE — a Slack message, email, Jira ticket, meeting note, or even a single sentence all work]
 ---
 
-**Option B — Pull from a tool (requires MCP):**
-Read new feature requests from [Slack channel name / Jira project / Linear team] since [DATE].
-For each new request, draft a separate PRD.
+**Option B — Pull from an external tool (requires MCP):**
+Read new feature requests from [Slack channel name / Jira project / Linear team] received since [DATE].
+Draft a separate PRD for each new request.
 
-**Additional context (optional — include any that apply):**
-- Product area: [e.g. onboarding, billing, search]
-- Target users: [e.g. SMB customers, admin users, developers]
-- Known constraints: [e.g. must ship in 2 weeks, no backend changes, must work on mobile]
-- Related existing feature: [describe if relevant]
+**Additional context (include any that apply — delete what does not):**
+- Product area: [e.g. onboarding, billing, search, notifications]
+- Target users: [e.g. SMB admin users, enterprise developers, new sign-ups]
+- Known constraints: [e.g. must ship within 2 weeks, no backend changes, must support mobile]
+- Related existing feature or prior work: [describe if relevant]
+- Stakeholder who requested it: [name / team]
 
 ## Your task
 
 For each feature request:
-1. Identify the core user problem being solved (if not stated, infer it and flag your assumption).
-2. Identify the primary users affected.
-3. Define measurable success metrics.
-4. Define what is in scope and explicitly out of scope.
-5. List non-goals — what this feature deliberately does not solve.
-6. List open questions that must be answered before engineering can start.
-7. Produce a clean PRD draft in the format below.
+1. Identify the core user problem being solved. If the request does not state the problem, infer it from context and explicitly flag your inference.
+2. Identify the primary users affected and their goal.
+3. Define 2–4 measurable success metrics that would confirm the feature is working.
+4. Define what is in scope with enough precision for an engineer to begin estimating.
+5. Explicitly list what is out of scope — what this feature does not cover.
+6. List non-goals: problems this feature deliberately does not attempt to solve.
+7. List every open question that must be answered before engineering can start. Assign each question to the relevant owner (PM / Design / Engineering / Legal / Data).
+8. Note any assumptions you made about the request.
 
-If the request is too vague to produce a meaningful PRD, do not make up details — instead list what information is needed and why.
+**Important:** if the request is too vague to produce a meaningful PRD, do not guess. Instead, output a list of the specific information needed and explain why each item is required before work can begin.
 
 ## Output format
 
 ---
 # PRD: [Feature Name]
 
-| Field         | Value                        |
-|---------------|------------------------------|
-| Status        | Draft — pending PM review    |
-| Date          | [TODAY'S DATE]               |
-| Request source| [Slack / Jira / Email / etc.] |
-| Product area  | [Area]                       |
+| Field          | Value                         |
+|----------------|-------------------------------|
+| Status         | Draft — pending PM review     |
+| Date           | [TODAY'S DATE]                |
+| Request source | [Slack / Jira / Email / other]|
+| Product area   | [Area]                        |
+| Requested by   | [Stakeholder or team]         |
 
 ---
 
 ## Problem
-[What problem are we solving? Whose problem is it? What happens today without this feature?]
+[What problem are we solving? Whose problem is it? What does the user do today — and why is that inadequate?]
 
 ## Users
-[Who is this for? What are they trying to accomplish? Include user type and context.]
+[Who is this for? What are they trying to accomplish? Include user type, context, and frequency of need.]
 
 ## Success Metrics
-- [ ] [Metric 1 — e.g. "X% of new users complete onboarding in under 5 min"]
+- [ ] [Metric 1 — e.g. "80% of new users complete onboarding step 2 within 5 minutes of sign-up"]
 - [ ] [Metric 2]
+- [ ] [Metric 3]
 
 ## In Scope
-- [Feature / behaviour 1]
-- [Feature / behaviour 2]
+- [Specific feature or behaviour 1 — written with enough detail for engineering to estimate]
+- [Specific feature or behaviour 2]
 
 ## Out of Scope
-- [What this explicitly does NOT cover]
+- [What this PRD explicitly does NOT cover]
 
 ## Non-Goals
-- [Problem this feature does not attempt to solve]
+- [Problem this feature deliberately does not attempt to solve]
 
 ## Open Questions
-- [ ] [Question that must be answered before build begins]
-- [ ] [Decision needed from design / engineering / legal / etc.]
+- [ ] [Question 1] — Owner: [PM / Design / Engineering / Legal]
+- [ ] [Question 2] — Owner: [...]
 
 ## Notes &amp; Assumptions
-- [Flag any inference you made about the request]
+- [Flag every inference you made about the request — be explicit]
 ---
 
 [OPTIONAL:]
-Post this PRD to [Notion page / Google Drive / filename].
-Notify [PM name / Slack channel] that a new draft PRD is ready for review.</div>
+Save this PRD to [Notion page / Google Drive / filename].
+Notify [name / Slack channel] that a new draft PRD is ready for review.</div>
+      </div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-label">What You Get Back</div>
-    <div class="output-box"># PRD: [Feature Name]
-Status: Draft | Date: today | Source: [Slack/Jira/Email]
+    <div class="section">
+      <div class="section-label">What you get back</div>
+      <div class="output-box"># PRD: [Feature Name]
+Status: Draft  |  Date: today  |  Source: [Slack/Jira/Email]
+Product area: [area]  |  Requested by: [stakeholder]
 
 ## Problem
 ## Users
 ## Success Metrics (checkboxes)
 ## In Scope / Out of Scope
 ## Non-Goals
-## Open Questions (checkboxes)
+## Open Questions (checkboxes with assigned owner)
 ## Notes &amp; Assumptions</div>
-  </div>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tips &amp; Variations</div>
-    <ul class="tips-list">
-      <li><strong>One sentence request?</strong> Paste it as-is. The agent drafts what it can and flags every gap as an open question — exactly what you want before a spec conversation.</li>
-      <li><strong>Multiple requests at once?</strong> Add: <em>"Here are [N] requests. Draft a separate PRD for each."</em> then list them numbered.</li>
-      <li><strong>Want a shorter output?</strong> Add: <em>"Write a lightweight PRD — 1-pager max, skip the table header."</em></li>
-      <li><strong>Want it written for engineers?</strong> Add: <em>"Write the scope section with enough detail for an engineer to estimate the work."</em></li>
-      <li><strong>Want it written for stakeholders?</strong> Add: <em>"Write the Problem section for a non-technical audience — no jargon."</em></li>
-    </ul>
-  </div>
+    <div class="section">
+      <div class="section-label">Tips &amp; variations</div>
+      <ul class="tips-list">
+        <li><strong>One sentence request?</strong> Paste it as-is. The agent will draft what it can and surface every gap as a tracked open question — exactly what you need before a scoping conversation with engineering.</li>
+        <li><strong>Multiple requests at once?</strong> Add: <em>"Here are [N] requests. Draft a separate PRD for each, numbered."</em> then list them.</li>
+        <li><strong>Want a lightweight 1-pager?</strong> Add: <em>"Write a lightweight PRD — one page maximum. Drop the metadata table."</em></li>
+        <li><strong>Writing for engineers?</strong> Add: <em>"Write the In Scope section with enough technical detail for an engineer to estimate the work."</em></li>
+        <li><strong>Writing for stakeholders?</strong> Add: <em>"Write the Problem and Users sections for a non-technical executive audience — no jargon."</em></li>
+      </ul>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tool Connections (All Optional)</div>
-    <div class="setup-grid">
-      <div class="setup-card">
-        <h4>Minimal path (no tools)</h4>
-        <ul>
-          <li>Paste the feature request into Claude</li>
-          <li>Add optional context if you have it</li>
-          <li>Run — no accounts or connectors needed</li>
-        </ul>
-      </div>
-      <div class="setup-card">
-        <h4>Connected path (with MCP)</h4>
-        <ul>
-          <li><strong>Slack:</strong> monitor #feature-requests channel</li>
-          <li><strong>Jira / Linear:</strong> pull new tickets automatically</li>
-          <li><strong>Notion:</strong> save PRD drafts + notify team</li>
-        </ul>
+    <div class="section">
+      <div class="section-label">When not to use this agent</div>
+      <div class="caution-box">
+        <strong>Skip this agent if:</strong> the feature is well-understood and your team already has a detailed spec — using it here would just add overhead. Also skip it if the request is purely a bug report with a clear reproduction path; use your issue tracker directly instead.
       </div>
     </div>
-    <p style="font-size:12.5px; color:#57606a;">Full setup instructions in <a href="https://github.com/alihabbache/pm-copartner/blob/main/03-specs/setup.md" target="_blank">setup.md</a> on GitHub.</p>
-  </div>
+
+    <div class="section">
+      <div class="section-label">Tool connections (all optional)</div>
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h4>Minimal — no tools needed</h4>
+          <ul>
+            <li>Paste the feature request into Claude</li>
+            <li>Add optional context if available</li>
+            <li>Run — zero accounts or connectors required</li>
+          </ul>
+        </div>
+        <div class="setup-card">
+          <h4>Connected — with MCP</h4>
+          <ul>
+            <li><strong>Slack:</strong> monitor a #feature-requests channel</li>
+            <li><strong>Jira / Linear:</strong> pull new tickets automatically</li>
+            <li><strong>Notion:</strong> save PRD drafts and notify the team</li>
+          </ul>
+        </div>
+      </div>
+      <p class="setup-note">Full setup in <a href="https://github.com/alihabbache/pm-copartner/blob/main/03-specs/setup.md" target="_blank">setup.md</a> on GitHub.</p>
+    </div>
+  </main>
 </div>
 
 <footer>
-  <span>PM CoPartner — MIT License</span>
+  <span>PM CoPartner &mdash; MIT License</span>
+  <span>&middot;</span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>&middot;</span>
   <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
   <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
   <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
@@ -247,10 +302,7 @@ function copyPrompt(btn) {
   navigator.clipboard.writeText(text).then(function() {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(function() {
-      btn.textContent = 'Copy prompt';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
   });
 }
 </script>

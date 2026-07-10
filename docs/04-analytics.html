@@ -3,65 +3,95 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Analytics Agent — PM CoPartner</title>
-<meta name="description" content="Compare metrics to targets, get RAG status, surface top movers, and receive one action per red metric."/>
+<title>Analytics — PM CoPartner</title>
+<meta name="description" content="Compare metrics to targets, get RAG status, surface top movers, and receive one specific action per red metric."/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.6; background: #ffffff; color: #1f2328; }
-  a { color: #3b82d4; text-decoration: none; }
+  :root {
+    --ink: #111827; --ink-2: #374151; --ink-3: #6b7280; --ink-4: #9ca3af;
+    --border: #e5e7eb; --surface: #f9fafb; --white: #ffffff;
+    --teal: #0d9488; --teal-lt: #ccfbf1; --teal-mid: #14b8a6;
+    --stage-bg: #dcfce7; --stage-fg: #166534;
+    --radius: 10px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system,"Segoe UI",system-ui,sans-serif; font-size: 15px; line-height: 1.6; background: var(--white); color: var(--ink); }
+  a { color: var(--teal); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  nav { border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 52px; position: sticky; top: 0; background: #fff; z-index: 100; }
-  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  nav { border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; gap: 28px; height: 54px; position: sticky; top: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); z-index: 100; }
+  .nav-logo { font-weight: 800; font-size: 14.5px; color: var(--ink); letter-spacing: -0.3px; flex-shrink: 0; display: flex; align-items: center; gap: 7px; }
   .nav-logo:hover { text-decoration: none; }
+  .nav-logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .nav-logo-mark svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
   .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .nav-links a { font-size: 13px; color: #57606a; }
-  .nav-links a:hover { color: #1f2328; text-decoration: none; }
-  .nav-links a.active { color: #1f2328; font-weight: 600; }
+  .nav-links a { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-links a.active { color: var(--ink); font-weight: 700; }
   .nav-right { margin-left: auto; }
-  .nav-right a { font-size: 13px; font-weight: 600; background: #1f2328; color: #fff; padding: 6px 14px; border-radius: 6px; }
-  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
-  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
-  .breadcrumb { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
-  .breadcrumb a { color: #8b949e; }
-  .breadcrumb a:hover { color: #3b82d4; }
-  .agent-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
-  .agent-num-lg { width: 48px; height: 48px; border-radius: 10px; background: #1f2328; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
-  .agent-title p { font-size: 14px; color: #57606a; }
-  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-  .chip { font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; color: #57606a; }
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #57606a; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 18px; }
+  .nav-right a { font-size: 12.5px; font-weight: 600; border: 1.5px solid var(--border); color: var(--ink-2); padding: 5px 15px; border-radius: 7px; }
+  .nav-right a:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
+  .page-wrap { display: grid; grid-template-columns: 200px 1fr; max-width: 960px; margin: 0 auto; padding: 40px 24px 88px; gap: 48px; }
+  @media (max-width: 720px) { .page-wrap { grid-template-columns: 1fr; } .side-nav { display: none; } }
+  .side-nav { position: sticky; top: 74px; align-self: start; }
+  .side-nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 12px; }
+  .side-nav-list { list-style: none; }
+  .side-nav-list li { margin-bottom: 2px; }
+  .side-nav-list a { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-3); font-weight: 500; padding: 6px 10px; border-radius: 7px; border: 1.5px solid transparent; }
+  .side-nav-list a:hover { background: var(--surface); color: var(--ink); text-decoration: none; }
+  .side-nav-list a.active { background: var(--teal-lt); color: var(--teal); font-weight: 700; }
+  .side-nav-list .s-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
+  .s-01 { background: #ede9fe; color: #6d28d9; }
+  .s-02 { background: #fef3c7; color: #92400e; }
+  .s-03 { background: #dbeafe; color: #1e40af; }
+  .s-04 { background: #dcfce7; color: #166534; }
+  .s-05 { background: #fce7f3; color: #9d174d; }
+  .main { min-width: 0; }
+  .breadcrumb { font-size: 12px; color: var(--ink-4); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--ink-4); }
+  .breadcrumb a:hover { color: var(--teal); text-decoration: underline; }
+  .agent-header { margin-bottom: 36px; }
+  .agent-stage { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .stage-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 4px; padding: 3px 9px; background: var(--stage-bg); color: var(--stage-fg); }
+  .stage-seq { font-size: 12px; color: var(--ink-4); font-weight: 500; }
+  .agent-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.15; }
+  .agent-header p { font-size: 14px; color: var(--ink-2); line-height: 1.65; max-width: 560px; }
+  .meta-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-chip { font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--ink-3); }
+  .save-band { display: flex; align-items: center; gap: 10px; background: var(--teal-lt); border-radius: 8px; padding: 10px 16px; margin-bottom: 36px; font-size: 13px; color: var(--ink-2); }
+  .save-band strong { color: var(--teal); }
   .section { margin-bottom: 40px; }
-  p { margin-bottom: 10px; }
-  ul { padding-left: 20px; margin-bottom: 12px; }
-  li { margin-bottom: 5px; font-size: 13.5px; color: #1f2328; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 18px; }
   .prompt-wrap { position: relative; }
-  .prompt-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12.5px; line-height: 1.7; color: #1f2328; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
-  .copy-btn { position: absolute; top: 10px; right: 10px; background: #1f2328; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .copy-btn:hover { background: #3b82d4; }
-  .copy-btn.copied { background: #2d8a4e; }
-  .output-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.7; color: #57606a; white-space: pre-wrap; word-break: break-word; }
+  .prompt-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink); white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+  .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--teal); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .copy-btn:hover { background: #0f766e; }
+  .copy-btn.copied { background: #15803d; }
+  .output-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink-3); white-space: pre-wrap; word-break: break-word; }
   .tips-list { list-style: none; padding: 0; }
-  .tips-list li { padding: 10px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
-  .tips-list li strong { color: #1f2328; }
-  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  .setup-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; }
-  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .setup-card p, .setup-card li { font-size: 12.5px; color: #57606a; }
+  .tips-list li { padding: 12px 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+  .tips-list li strong { color: var(--ink); }
+  .caution-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .caution-box strong { color: #78350f; }
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .setup-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
   .setup-card ul { padding-left: 16px; }
-  .agent-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-  .agent-nav a { font-size: 12px; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 20px; color: #57606a; background: #fff; }
-  .agent-nav a:hover { border-color: #3b82d4; color: #3b82d4; text-decoration: none; }
-  .agent-nav a.active { background: #1f2328; color: #fff; border-color: #1f2328; }
-  footer { border-top: 1px solid #e5e7eb; padding: 24px; text-align: center; font-size: 12px; color: #8b949e; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-  footer a { color: #8b949e; }
-  footer a:hover { color: #1f2328; }
+  .setup-card li { font-size: 12.5px; color: var(--ink-2); margin-bottom: 5px; }
+  .setup-note { font-size: 12px; color: var(--ink-4); }
+  p { margin-bottom: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 22px 32px; text-align: center; font-size: 12px; color: var(--ink-4); display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; align-items: center; }
+  footer a { color: var(--ink-4); }
+  footer a:hover { color: var(--ink); }
+  @media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } nav { padding: 0 16px; gap: 16px; } .nav-links { display: none; } }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-mark"><svg viewBox="0 0 12 12"><polyline points="2,9 5,4 7,7 9,3"/></svg></span>
+    PM CoPartner
+  </a>
   <div class="nav-links">
     <a href="01-discovery.html">Discovery</a>
     <a href="02-planning.html">Planning</a>
@@ -70,63 +100,74 @@
     <a href="05-launch.html">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
-<div class="page">
-  <div class="breadcrumb"><a href="index.html">PM CoPartner</a> / Agent 04</div>
+<div class="page-wrap">
+  <aside class="side-nav">
+    <div class="side-nav-label">All agents</div>
+    <ul class="side-nav-list">
+      <li><a href="01-discovery.html"><span class="s-pill s-01">Research</span> Discovery</a></li>
+      <li><a href="02-planning.html"><span class="s-pill s-02">Strategy</span> Planning</a></li>
+      <li><a href="03-specs.html"><span class="s-pill s-03">Delivery</span> Specs</a></li>
+      <li><a href="04-analytics.html" class="active"><span class="s-pill s-04">Metrics</span> Analytics</a></li>
+      <li><a href="05-launch.html"><span class="s-pill s-05">Launch</span> Launch</a></li>
+    </ul>
+  </aside>
 
-  <div class="agent-header">
-    <div class="agent-num-lg">04</div>
-    <div class="agent-title">
+  <main class="main">
+    <div class="breadcrumb"><a href="index.html">PM CoPartner</a> &rsaquo; Analytics</div>
+
+    <div class="agent-header">
+      <div class="agent-stage">
+        <span class="stage-badge">Metrics</span>
+        <span class="stage-seq">Agent 4 of 5</span>
+      </div>
       <h1>Analytics</h1>
-      <p>Compare metrics to targets, get RAG status, surface top movers, and receive one specific action per red metric.</p>
-      <div class="meta-chips">
-        <span class="chip">Weekly Monday or Friday EOD</span>
-        <span class="chip">Post-release monitoring</span>
-        <span class="chip">No setup required</span>
+      <p>Benchmark your metrics against targets, get RAG status for every KPI, surface the top movers, and receive one specific, actionable recommendation for each red indicator.</p>
+      <div class="meta-row">
+        <span class="meta-chip">Weekly Monday standup</span>
+        <span class="meta-chip">Friday EOD digest</span>
+        <span class="meta-chip">Post-release monitoring</span>
+        <span class="meta-chip">No setup required</span>
       </div>
     </div>
-  </div>
 
-  <div class="agent-nav">
-    <a href="01-discovery.html">01 Discovery</a>
-    <a href="02-planning.html">02 Planning</a>
-    <a href="03-specs.html">03 Specs</a>
-    <a href="04-analytics.html" class="active">04 Analytics</a>
-    <a href="05-launch.html">05 Launch</a>
-  </div>
+    <div class="save-band">
+      <strong>Time saved:</strong> ~1 hour of manual Monday reporting, every single week.
+    </div>
 
-  <div class="section">
-    <div class="section-label">Prompt — Copy &amp; Paste into Claude</div>
-    <div class="prompt-wrap">
-      <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
-      <div class="prompt-box" id="prompt-text">You are a product analytics assistant helping a Product Manager produce a weekly metrics digest.
+    <div class="section">
+      <div class="section-label">Prompt — copy &amp; paste into Claude</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
+        <div class="prompt-box" id="prompt-text">You are a product analytics advisor helping a Product Manager produce a clear, decision-ready weekly metrics digest.
 
 ## Your inputs
 
 **This week's metrics:**
-[CHOOSE ONE — delete the others]
+[CHOOSE ONE — delete the options you are not using]
 
 Option A — Paste your numbers directly:
 ---
-[PASTE METRICS HERE — copy from your analytics tool, spreadsheet, or type them out]
-Example format:
+[PASTE METRICS HERE — copy from your analytics dashboard, spreadsheet, or type them manually]
+Format each metric as: Metric name: current value (prior period: previous value)
+Example:
 - Daily Active Users: 4,210 (last week: 4,050)
 - Trial-to-Paid Conversion: 8.2% (last week: 9.1%)
 - Avg Session Duration: 6m 42s (last week: 6m 15s)
 - Support tickets opened: 87 (last week: 64)
 ---
 
-Option B — From a file or export (paste CSV rows or attach file):
-[PASTE CSV DATA HERE]
+Option B — From a CSV or file export:
+[PASTE CSV DATA OR ROWS HERE]
 
 Option C — Pull from a tool (requires MCP):
-Read this week's product analytics from [Google Analytics export / Mixpanel / Notion database].
+Read this week's product metrics from [Google Analytics / Mixpanel / Notion database / spreadsheet URL].
 
 **KPI targets:**
-[PASTE YOUR TARGETS HERE — or describe them]
+[PASTE YOUR TARGETS — or approximate them if you do not have formal ones]
 Example:
 - DAU target: 4,500
 - Trial-to-Paid target: 10%
@@ -135,111 +176,125 @@ Example:
 
 Or: Read our KPI targets from [Notion page / spreadsheet / doc URL].
 
-**Context (optional but useful):**
-- Did anything ship this week? [YES/NO — if yes, briefly describe]
-- Any known external factors? [e.g. holiday period, outage, marketing campaign]
+**Context (optional but improves accuracy — delete what does not apply):**
+- Did anything ship this week? [YES / NO — if yes, briefly describe what]
+- Any known external factors? [e.g. public holiday, service outage, marketing campaign launch]
 - Reporting period: [Week of DATE]
+- Product area focus: [e.g. acquisition, activation, retention]
 
 ## Your task
 
-1. Compare each metric to its target. Assign a RAG status:
+1. Compare each metric against its target. Assign a RAG status:
    - 🟢 Green — at or above target
    - 🟡 Amber — within 10% below target
-   - 🔴 Red — more than 10% below target (or a significant negative trend)
-2. Calculate week-over-week change for each metric.
-3. Identify the top 2–3 movers (biggest positive and negative changes).
-4. For each Red metric, suggest one specific, actionable recommendation.
-5. Write a 2–3 sentence executive summary at the top.
-6. Flag any data that looks anomalous or possibly incorrect.
+   - 🔴 Red — more than 10% below target, or showing a significant negative multi-week trend
+2. Calculate the week-over-week percentage change for every metric.
+3. Identify the top 2–3 movers — the biggest positive and negative changes this week.
+4. For each Red metric, recommend one specific, immediately actionable next step. Be concrete — do not give generic advice.
+5. Write a 2–3 sentence executive summary at the very top. Lead with the single most important headline.
+6. Flag any data that looks anomalous, inconsistent, or possibly incorrect.
 
 ## Output format
 
 ---
 # Weekly Metrics Digest — Week of [DATE]
+*Prepared by the PM Analytics Agent*
 
-## Summary
-[2–3 sentences. What was the headline of the week? What needs attention?]
+## Executive Summary
+[2–3 sentences. Lead with the headline. What needs immediate attention?]
 
 ## Metrics vs Target
 | Metric | Target | Actual | Status | WoW Change |
 |--------|--------|--------|--------|------------|
-| [Metric] | [X] | [Y] | 🟢 | +3% |
-| [Metric] | [X] | [Y] | 🔴 | -8% |
+| [Metric] | [X] | [Y] | 🟢 | +3.9% |
+| [Metric] | [X] | [Y] | 🔴 | -9.9% |
 
-## Top Movers
-- 📈 [Metric] — up [X]% WoW. Possible cause: [...]
-- 📉 [Metric] — down [X]% WoW. Possible cause: [...]
+## Top Movers This Week
+- 📈 [Metric] — up [X]% WoW. Likely cause: [brief hypothesis]
+- 📉 [Metric] — down [X]% WoW. Likely cause: [brief hypothesis]
 
 ## Recommended Actions
-| Metric | Status | Recommended Action |
-|--------|--------|-------------------|
-| [Red metric] | 🔴 | [Specific action] |
+| Metric | Status | Owner | Recommended Action |
+|--------|--------|-------|-------------------|
+| [Red metric] | 🔴 | [PM / Eng / Design] | [One specific, concrete action] |
 
-## Anomalies / Flags
-- [Note anything that looks wrong or needs verification]
+## Anomalies &amp; Flags
+- [Note anything that looks wrong, suspicious, or requires verification before sharing widely]
 
 ## Data Sources
-- Analytics: [source name]
-- Targets: [source name]
-- Period: [date range]
+- Metrics source: [tool or export name]
+- Targets source: [doc or system]
+- Reporting period: [date range]
 ---
 
 [OPTIONAL:]
 Post this digest to [#product-metrics Slack channel / email / Notion page].</div>
+      </div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-label">What You Get Back</div>
-    <div class="output-box"># Weekly Metrics Digest — Week of [Date]
+    <div class="section">
+      <div class="section-label">What you get back</div>
+      <div class="output-box"># Weekly Metrics Digest — Week of [Date]
 
-## Summary (2–3 sentences)
+## Executive Summary (2–3 sentences, headline first)
 
 ## Metrics vs Target
 | Metric | Target | Actual | Status | WoW Change |
 
-## Top Movers
-## Recommended Actions
-## Anomalies / Flags
+## Top Movers This Week
+## Recommended Actions (with owner column)
+## Anomalies &amp; Flags
 ## Data Sources</div>
-  </div>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tips &amp; Variations</div>
-    <ul class="tips-list">
-      <li><strong>No formal targets?</strong> Add: <em>"I don't have formal targets — use the prior week's numbers as the baseline and flag any metric that moved more than 10% in either direction."</em></li>
-      <li><strong>Too many metrics?</strong> Add: <em>"Focus only on these 5 metrics: [list them]."</em></li>
-      <li><strong>Want trend analysis over multiple weeks?</strong> Paste data from the last 4 weeks and add: <em>"Identify any multi-week trends, not just this week's movement."</em></li>
-      <li><strong>Want it posted to Slack?</strong> Add: <em>"Format the summary section as a Slack message — use bullet points, keep it scannable."</em></li>
-    </ul>
-  </div>
+    <div class="section">
+      <div class="section-label">Tips &amp; variations</div>
+      <ul class="tips-list">
+        <li><strong>No formal targets?</strong> Add: <em>"I have no formal targets. Use the prior week's number as the baseline and flag any metric that moved more than 10% in either direction."</em></li>
+        <li><strong>Too many metrics?</strong> Add: <em>"Focus only on these 5 metrics: [list them]. Ignore everything else."</em></li>
+        <li><strong>Want multi-week trend analysis?</strong> Paste the last 4 weeks of data and add: <em>"Identify any sustained multi-week trends, not just single-week movements."</em></li>
+        <li><strong>Want it formatted for Slack?</strong> Add: <em>"After the full digest, produce a Slack-ready summary — bullet points, under 200 words, scannable on mobile."</em></li>
+        <li><strong>Post-release check?</strong> Add: <em>"We shipped [feature] on [date]. Flag any metrics that may have been affected — positive or negative."</em></li>
+      </ul>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tool Connections (All Optional)</div>
-    <div class="setup-grid">
-      <div class="setup-card">
-        <h4>Minimal path (no tools)</h4>
-        <ul>
-          <li>Paste this week's numbers into Claude</li>
-          <li>Add your targets (even rough estimates work)</li>
-          <li>Run — no accounts or connectors needed</li>
-        </ul>
-      </div>
-      <div class="setup-card">
-        <h4>Connected path (with MCP)</h4>
-        <ul>
-          <li><strong>Notion:</strong> read KPI targets + save digest</li>
-          <li><strong>Google Drive:</strong> read CSV exports</li>
-          <li><strong>Slack:</strong> post digest to channel</li>
-        </ul>
+    <div class="section">
+      <div class="section-label">When not to use this agent</div>
+      <div class="caution-box">
+        <strong>Skip this agent if:</strong> you have no prior-period data to compare against (you need at least two data points for WoW change), or if your metrics are non-numeric qualitative indicators — this agent is optimised for quantitative KPIs with defined targets.
       </div>
     </div>
-    <p style="font-size:12.5px; color:#57606a;">Full setup instructions in <a href="https://github.com/alihabbache/pm-copartner/blob/main/04-analytics/setup.md" target="_blank">setup.md</a> on GitHub.</p>
-  </div>
+
+    <div class="section">
+      <div class="section-label">Tool connections (all optional)</div>
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h4>Minimal — no tools needed</h4>
+          <ul>
+            <li>Paste this week's numbers into Claude</li>
+            <li>Add your targets (rough estimates work)</li>
+            <li>Run — zero accounts or connectors required</li>
+          </ul>
+        </div>
+        <div class="setup-card">
+          <h4>Connected — with MCP</h4>
+          <ul>
+            <li><strong>Notion:</strong> read KPI targets + save the digest</li>
+            <li><strong>Google Drive:</strong> read CSV exports automatically</li>
+            <li><strong>Slack:</strong> post the digest to a metrics channel</li>
+          </ul>
+        </div>
+      </div>
+      <p class="setup-note">Full setup in <a href="https://github.com/alihabbache/pm-copartner/blob/main/04-analytics/setup.md" target="_blank">setup.md</a> on GitHub.</p>
+    </div>
+  </main>
 </div>
 
 <footer>
-  <span>PM CoPartner — MIT License</span>
+  <span>PM CoPartner &mdash; MIT License</span>
+  <span>&middot;</span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>&middot;</span>
   <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
   <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
   <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
@@ -251,10 +306,7 @@ function copyPrompt(btn) {
   navigator.clipboard.writeText(text).then(function() {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(function() {
-      btn.textContent = 'Copy prompt';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
   });
 }
 </script>

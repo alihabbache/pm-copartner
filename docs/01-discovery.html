@@ -3,99 +3,173 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Discovery Agent — PM CoPartner</title>
+<title>Discovery — PM CoPartner</title>
 <meta name="description" content="Turn raw user interview notes into a structured insight report with themes, quotes, and ranked opportunities."/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.6; background: #ffffff; color: #1f2328; }
-  a { color: #3b82d4; text-decoration: none; }
+  :root {
+    --ink: #111827; --ink-2: #374151; --ink-3: #6b7280; --ink-4: #9ca3af;
+    --border: #e5e7eb; --surface: #f9fafb; --white: #ffffff;
+    --teal: #0d9488; --teal-lt: #ccfbf1; --teal-mid: #14b8a6;
+    --stage-bg: #ede9fe; --stage-fg: #6d28d9;
+    --radius: 10px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system,"Segoe UI",system-ui,sans-serif; font-size: 15px; line-height: 1.6; background: var(--white); color: var(--ink); }
+  a { color: var(--teal); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  nav { border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 52px; position: sticky; top: 0; background: #fff; z-index: 100; }
-  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+
+  /* NAV */
+  nav { border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; gap: 28px; height: 54px; position: sticky; top: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); z-index: 100; }
+  .nav-logo { font-weight: 800; font-size: 14.5px; color: var(--ink); letter-spacing: -0.3px; flex-shrink: 0; display: flex; align-items: center; gap: 7px; }
   .nav-logo:hover { text-decoration: none; }
+  .nav-logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .nav-logo-mark svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
   .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .nav-links a { font-size: 13px; color: #57606a; }
-  .nav-links a:hover { color: #1f2328; text-decoration: none; }
-  .nav-links a.active { color: #1f2328; font-weight: 600; }
+  .nav-links a { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-links a.active { color: var(--ink); font-weight: 700; }
   .nav-right { margin-left: auto; }
-  .nav-right a { font-size: 13px; font-weight: 600; background: #1f2328; color: #fff; padding: 6px 14px; border-radius: 6px; }
-  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
+  .nav-right a { font-size: 12.5px; font-weight: 600; border: 1.5px solid var(--border); color: var(--ink-2); padding: 5px 15px; border-radius: 7px; }
+  .nav-right a:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
 
-  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
+  /* LAYOUT */
+  .page-wrap { display: grid; grid-template-columns: 200px 1fr; max-width: 960px; margin: 0 auto; padding: 40px 24px 88px; gap: 48px; }
+  @media (max-width: 720px) { .page-wrap { grid-template-columns: 1fr; } .side-nav { display: none; } }
 
-  .breadcrumb { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
-  .breadcrumb a { color: #8b949e; }
-  .breadcrumb a:hover { color: #3b82d4; }
+  /* SIDE NAV */
+  .side-nav { position: sticky; top: 74px; align-self: start; }
+  .side-nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 12px; }
+  .side-nav-list { list-style: none; }
+  .side-nav-list li { margin-bottom: 2px; }
+  .side-nav-list a {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12.5px; color: var(--ink-3); font-weight: 500;
+    padding: 6px 10px; border-radius: 7px;
+    border: 1.5px solid transparent;
+  }
+  .side-nav-list a:hover { background: var(--surface); color: var(--ink); text-decoration: none; }
+  .side-nav-list a.active { background: var(--teal-lt); color: var(--teal); font-weight: 700; border-color: transparent; }
+  .side-nav-list .s-pill {
+    font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
+    text-transform: uppercase; border-radius: 3px; padding: 1px 5px;
+    flex-shrink: 0;
+  }
+  .s-01 { background: #ede9fe; color: #6d28d9; }
+  .s-02 { background: #fef3c7; color: #92400e; }
+  .s-03 { background: #dbeafe; color: #1e40af; }
+  .s-04 { background: #dcfce7; color: #166534; }
+  .s-05 { background: #fce7f3; color: #9d174d; }
 
-  .agent-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
-  .agent-num-lg { width: 48px; height: 48px; border-radius: 10px; background: #1f2328; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
-  .agent-title p { font-size: 14px; color: #57606a; }
-  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-  .chip { font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; color: #57606a; }
+  /* MAIN CONTENT */
+  .main { min-width: 0; }
+  .breadcrumb { font-size: 12px; color: var(--ink-4); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--ink-4); }
+  .breadcrumb a:hover { color: var(--teal); text-decoration: underline; }
 
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #57606a; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 18px; }
+  /* AGENT HEADER */
+  .agent-header { margin-bottom: 36px; }
+  .agent-stage { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .stage-badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 0.07em;
+    text-transform: uppercase; border-radius: 4px;
+    padding: 3px 9px; background: var(--stage-bg); color: var(--stage-fg);
+  }
+  .stage-seq { font-size: 12px; color: var(--ink-4); font-weight: 500; }
+  .agent-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.15; }
+  .agent-header p { font-size: 14px; color: var(--ink-2); line-height: 1.65; max-width: 560px; }
+  .meta-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-chip { font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--ink-3); }
+
+  /* SAVE BAND */
+  .save-band {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--teal-lt); border-radius: 8px;
+    padding: 10px 16px; margin-bottom: 36px;
+    font-size: 13px; color: var(--ink-2);
+  }
+  .save-band strong { color: var(--teal); }
+
+  /* SECTIONS */
   .section { margin-bottom: 40px; }
+  .section-label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-4);
+    border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 18px;
+  }
 
-  h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
-  p { margin-bottom: 10px; }
-  ul { padding-left: 20px; margin-bottom: 12px; }
-  li { margin-bottom: 5px; font-size: 13.5px; color: #1f2328; }
-
-  /* PROMPT BOX */
+  /* PROMPT */
   .prompt-wrap { position: relative; }
   .prompt-box {
-    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px;
-    padding: 20px; font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 12.5px; line-height: 1.7; color: #1f2328;
-    white-space: pre-wrap; word-break: break-word;
-    max-height: 480px; overflow-y: auto;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 20px 20px 20px 20px;
+    font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px;
+    line-height: 1.75; color: var(--ink); white-space: pre-wrap;
+    word-break: break-word; max-height: 480px; overflow-y: auto;
   }
   .copy-btn {
-    position: absolute; top: 10px; right: 10px;
-    background: #1f2328; color: #fff;
-    border: none; border-radius: 6px;
-    padding: 7px 14px; font-size: 12px; font-weight: 600;
-    cursor: pointer; font-family: inherit;
+    position: absolute; top: 12px; right: 12px;
+    background: var(--teal); color: #fff; border: none;
+    border-radius: 6px; padding: 6px 14px; font-size: 12px;
+    font-weight: 700; cursor: pointer; letter-spacing: 0.01em;
   }
-  .copy-btn:hover { background: #3b82d4; }
-  .copy-btn.copied { background: #2d8a4e; }
+  .copy-btn:hover { background: #0f766e; }
+  .copy-btn.copied { background: #15803d; }
 
-  /* OUTPUT FORMAT */
+  /* OUTPUT */
   .output-box {
-    background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px;
-    padding: 16px 20px; font-family: "SFMono-Regular", Consolas, monospace;
-    font-size: 12px; line-height: 1.7; color: #57606a;
-    white-space: pre-wrap; word-break: break-word;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius); padding: 18px 20px;
+    font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px;
+    line-height: 1.75; color: var(--ink-3); white-space: pre-wrap; word-break: break-word;
   }
 
   /* TIPS */
   .tips-list { list-style: none; padding: 0; }
-  .tips-list li { padding: 10px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
-  .tips-list li strong { color: #1f2328; }
+  .tips-list li {
+    padding: 12px 16px; background: var(--surface);
+    border: 1.5px solid var(--border); border-radius: 8px;
+    margin-bottom: 8px; font-size: 13px; line-height: 1.6;
+  }
+  .tips-list li strong { color: var(--ink); }
+
+  /* CAUTION BOX */
+  .caution-box {
+    background: #fff7ed; border: 1.5px solid #fed7aa;
+    border-radius: 8px; padding: 14px 18px; font-size: 13px;
+    color: #92400e; line-height: 1.6;
+  }
+  .caution-box strong { color: #78350f; }
 
   /* SETUP */
-  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  .setup-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; }
-  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .setup-card p, .setup-card li { font-size: 12.5px; color: #57606a; }
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .setup-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
   .setup-card ul { padding-left: 16px; }
+  .setup-card li { font-size: 12.5px; color: var(--ink-2); margin-bottom: 5px; }
+  .setup-note { font-size: 12px; color: var(--ink-4); }
 
-  /* NAV AGENTS */
-  .agent-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-  .agent-nav a { font-size: 12px; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 20px; color: #57606a; background: #fff; }
-  .agent-nav a:hover { border-color: #3b82d4; color: #3b82d4; text-decoration: none; }
-  .agent-nav a.active { background: #1f2328; color: #fff; border-color: #1f2328; }
+  p { margin-bottom: 10px; }
 
-  footer { border-top: 1px solid #e5e7eb; padding: 24px; text-align: center; font-size: 12px; color: #8b949e; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-  footer a { color: #8b949e; }
-  footer a:hover { color: #1f2328; }
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 22px 32px; text-align: center; font-size: 12px; color: var(--ink-4); display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; align-items: center; }
+  footer a { color: var(--ink-4); }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    .setup-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; gap: 16px; }
+    .nav-links { display: none; }
+  }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-mark"><svg viewBox="0 0 12 12"><polyline points="2,9 5,4 7,7 9,3"/></svg></span>
+    PM CoPartner
+  </a>
   <div class="nav-links">
     <a href="01-discovery.html" class="active">Discovery</a>
     <a href="02-planning.html">Planning</a>
@@ -104,81 +178,101 @@
     <a href="05-launch.html">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
-<div class="page">
-  <div class="breadcrumb"><a href="index.html">PM CoPartner</a> / Agent 01</div>
+<div class="page-wrap">
+  <!-- SIDEBAR -->
+  <aside class="side-nav">
+    <div class="side-nav-label">All agents</div>
+    <ul class="side-nav-list">
+      <li><a href="01-discovery.html" class="active"><span class="s-pill s-01">Research</span> Discovery</a></li>
+      <li><a href="02-planning.html"><span class="s-pill s-02">Strategy</span> Planning</a></li>
+      <li><a href="03-specs.html"><span class="s-pill s-03">Delivery</span> Specs</a></li>
+      <li><a href="04-analytics.html"><span class="s-pill s-04">Metrics</span> Analytics</a></li>
+      <li><a href="05-launch.html"><span class="s-pill s-05">Launch</span> Launch</a></li>
+    </ul>
+  </aside>
 
-  <div class="agent-header">
-    <div class="agent-num-lg">01</div>
-    <div class="agent-title">
+  <!-- MAIN -->
+  <main class="main">
+    <div class="breadcrumb"><a href="index.html">PM CoPartner</a> &rsaquo; Discovery</div>
+
+    <div class="agent-header">
+      <div class="agent-stage">
+        <span class="stage-badge">Research</span>
+        <span class="stage-seq">Agent 1 of 5</span>
+      </div>
       <h1>Discovery</h1>
-      <p>Turn raw user interview notes into a structured insight report with themes, quotes, and ranked opportunities.</p>
-      <div class="meta-chips">
-        <span class="chip">Run after research sprints</span>
-        <span class="chip">Before planning</span>
-        <span class="chip">No setup required</span>
+      <p>Transform raw user interview notes into a structured insight report — complete with recurring themes, verbatim quotes, and a ranked opportunity table your whole team can act on.</p>
+      <div class="meta-row">
+        <span class="meta-chip">After research sprints</span>
+        <span class="meta-chip">Before planning</span>
+        <span class="meta-chip">No setup required</span>
       </div>
     </div>
-  </div>
 
-  <div class="agent-nav">
-    <a href="01-discovery.html" class="active">01 Discovery</a>
-    <a href="02-planning.html">02 Planning</a>
-    <a href="03-specs.html">03 Specs</a>
-    <a href="04-analytics.html">04 Analytics</a>
-    <a href="05-launch.html">05 Launch</a>
-  </div>
+    <div class="save-band">
+      <strong>Time saved:</strong> ~2–3 hours of manual synthesis, every research sprint.
+    </div>
 
-  <!-- PROMPT -->
-  <div class="section">
-    <div class="section-label">Prompt — Copy &amp; Paste into Claude</div>
-    <div class="prompt-wrap">
-      <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
-      <div class="prompt-box" id="prompt-text">You are a user research analyst helping a Product Manager synthesise interview notes.
+    <!-- PROMPT -->
+    <div class="section">
+      <div class="section-label">Prompt — copy &amp; paste into Claude</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
+        <div class="prompt-box" id="prompt-text">You are an expert user research analyst working alongside a Product Manager to synthesise interview notes into clear, decision-ready insights.
 
 ## Your inputs
 
-[CHOOSE ONE OF THE FOLLOWING INPUT METHODS — delete the others before sending]
+[CHOOSE ONE INPUT METHOD — delete the option you are not using]
 
 **Option A — Paste notes directly:**
 Here are my raw interview notes:
 ---
-[PASTE YOUR NOTES HERE — bullet points, full transcripts, or rough text all work]
+[PASTE YOUR NOTES HERE — bullet points, full transcripts, rough jottings, or voice-note transcripts all work]
 ---
 
-**Option B — Notes are in a folder / Notion page (requires MCP):**
-Read my interview notes from [Notion page URL / Drive folder name / file path].
+**Option B — Notes are in an external tool (requires MCP):**
+Read my interview notes from [Notion page URL / Google Drive folder / file path].
 
 ## Your task
 
-1. Read all the notes carefully.
-2. Identify the top recurring themes. Aim for 3–7 themes. Name each theme in plain language.
-3. For each theme, pull 2–3 direct supporting quotes from the notes (verbatim where possible).
-4. Rank each theme by frequency (how many participants mentioned it) and perceived severity.
-5. Produce a ranked list of opportunity areas — problems worth solving, based on the themes.
-6. Flag any contradictions or outlier opinions that don't fit the main themes.
+Work through the following steps carefully:
+
+1. Read all the notes in full before drawing any conclusions.
+2. Identify the top recurring themes across participants. Aim for 3–7 themes. Name each in plain, jargon-free language.
+3. For each theme, pull 2–3 direct verbatim quotes from the notes that illustrate it best.
+4. Rank themes by: (a) frequency — how many participants raised it, and (b) perceived severity — how much pain or friction it caused.
+5. Produce a ranked list of opportunity areas — specific problems worth solving, grounded in the themes.
+6. Flag any contradictions, outlier opinions, or data points that don't fit the main narrative.
+7. Propose 3–5 concrete next steps the PM team can take based on the findings.
+
+If the notes are too thin to support a theme, say so — do not invent evidence.
 
 ## Output format
 
-Return a structured one-page insight report in this exact format:
+Return a structured insight report using exactly this format:
 
 ---
 # Research Synthesis — [DATE or SPRINT NAME]
 **Interviews conducted:** [NUMBER]
 **Date range:** [START DATE] – [END DATE]
+**Conducted by:** [RESEARCHER NAME or TEAM]
+
+## Executive Summary
+[2–3 sentences. What is the single biggest finding? What should the PM team do first?]
 
 ## Top Themes
 
 ### 1. [Theme Name] — [X of Y participants]
 > "[Quote 1]" — Participant [number or role]
 > "[Quote 2]" — Participant [number or role]
-*Summary: [One sentence on what this theme means for the product.]*
+*Insight: [One sentence on what this theme reveals about user needs or behaviour.]*
 
 ### 2. [Theme Name] — ...
-[repeat]
+[repeat for each theme]
 
 ## Ranked Opportunity Areas
 | # | Opportunity | Frequency | Severity | Recommended Next Step |
@@ -187,75 +281,91 @@ Return a structured one-page insight report in this exact format:
 | 2 | ...         | ...       | ...      | ...                   |
 
 ## Contradictions &amp; Outliers
-- [Note any conflicting viewpoints or unusual data points]
+- [Note conflicting viewpoints or unusual data points — these often reveal edge cases worth investigating]
 
 ## Suggested Next Steps
-- [ ] [Action item 1]
+- [ ] [Action item 1 — who owns it, what is the deadline]
 - [ ] [Action item 2]
+- [ ] [Action item 3]
 ---
 
-[OPTIONAL — add this line if you want to save the output:]
+[OPTIONAL — add if you want to save the output:]
 Save this report to [Notion page / Google Drive folder / filename].</div>
+      </div>
     </div>
-  </div>
 
-  <!-- OUTPUT FORMAT -->
-  <div class="section">
-    <div class="section-label">What You Get Back</div>
-    <div class="output-box"># Research Synthesis — [Date / Sprint]
-Interviews conducted: N | Date range: start – end
+    <!-- OUTPUT -->
+    <div class="section">
+      <div class="section-label">What you get back</div>
+      <div class="output-box"># Research Synthesis — [Date / Sprint]
+Interviews conducted: N  |  Date range: start – end  |  Conducted by: [name]
+
+## Executive Summary
+[2–3 sentence headline — biggest finding + recommended first action]
 
 ## Top Themes
 ### 1. [Theme] — X of Y participants
   "[Quote]" — Participant N
-  Summary: one sentence
+  Insight: one sentence
 
 ## Ranked Opportunity Areas
 | # | Opportunity | Frequency | Severity | Recommended Next Step |
 
 ## Contradictions &amp; Outliers
-## Suggested Next Steps</div>
-  </div>
+## Suggested Next Steps (checkboxes with owner + deadline)</div>
+    </div>
 
-  <!-- TIPS -->
-  <div class="section">
-    <div class="section-label">Tips &amp; Variations</div>
-    <ul class="tips-list">
-      <li><strong>No formal notes?</strong> Paste meeting jottings, a voice note transcript, or bullet points from memory — the agent handles messy input.</li>
-      <li><strong>Multiple formats?</strong> Paste everything together. Separate each interview with a <code>---</code> divider and a label like <code>Interview 1 — [Role]</code>.</li>
-      <li><strong>Want a shorter output?</strong> Add: <em>"Keep the report to one page. Be concise."</em> at the end.</li>
-      <li><strong>Want it in a different language?</strong> Add: <em>"Write the report in [language]."</em></li>
-    </ul>
-  </div>
+    <!-- TIPS -->
+    <div class="section">
+      <div class="section-label">Tips &amp; variations</div>
+      <ul class="tips-list">
+        <li><strong>No formal notes?</strong> Paste meeting jottings, a voice transcript, or bullet points written from memory — the agent works with messy, unstructured input.</li>
+        <li><strong>Multiple interviews in different formats?</strong> Paste everything together. Separate each interview with a <code>---</code> divider and a label like <code>Interview 1 — [Role, Company]</code>.</li>
+        <li><strong>Want a shorter output?</strong> Add: <em>"Keep the report to one page. Prioritise brevity over completeness."</em></li>
+        <li><strong>Want it in a different language?</strong> Add: <em>"Write the report in [language]."</em></li>
+        <li><strong>Want it ready for a stakeholder slide?</strong> Add: <em>"After the report, write a 3-bullet TL;DR suitable for a leadership slide."</em></li>
+      </ul>
+    </div>
 
-  <!-- SETUP -->
-  <div class="section">
-    <div class="section-label">Tool Connections (All Optional)</div>
-    <div class="setup-grid">
-      <div class="setup-card">
-        <h4>Minimal path (no tools)</h4>
-        <ul>
-          <li>Copy your notes from anywhere</li>
-          <li>Paste into Claude.ai or Claude Desktop</li>
-          <li>Run — no accounts or connectors needed</li>
-        </ul>
-      </div>
-      <div class="setup-card">
-        <h4>Connected path (with MCP)</h4>
-        <ul>
-          <li><strong>Notion:</strong> pull notes + save report</li>
-          <li><strong>Google Drive:</strong> read docs, write output</li>
-          <li><strong>Linear:</strong> create issues from opportunities</li>
-        </ul>
+    <!-- WHEN NOT TO USE -->
+    <div class="section">
+      <div class="section-label">When not to use this agent</div>
+      <div class="caution-box">
+        <strong>Skip this agent if:</strong> you have fewer than 2 interviews (there's not enough signal to synthesise), or if your notes contain only quantitative survey data — this agent is optimised for qualitative, conversational input.
       </div>
     </div>
-    <p style="font-size:12.5px; color:#57606a;">Full setup instructions in <a href="https://github.com/alihabbache/pm-copartner/blob/main/01-discovery/setup.md" target="_blank">setup.md</a> on GitHub.</p>
-  </div>
 
+    <!-- SETUP -->
+    <div class="section">
+      <div class="section-label">Tool connections (all optional)</div>
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h4>Minimal — no tools needed</h4>
+          <ul>
+            <li>Copy your notes from anywhere</li>
+            <li>Paste into Claude.ai or Claude Desktop</li>
+            <li>Run — zero accounts or connectors required</li>
+          </ul>
+        </div>
+        <div class="setup-card">
+          <h4>Connected — with MCP</h4>
+          <ul>
+            <li><strong>Notion:</strong> pull notes + save the finished report</li>
+            <li><strong>Google Drive:</strong> read docs, write output</li>
+            <li><strong>Linear:</strong> auto-create issues from opportunities</li>
+          </ul>
+        </div>
+      </div>
+      <p class="setup-note">Full setup in <a href="https://github.com/alihabbache/pm-copartner/blob/main/01-discovery/setup.md" target="_blank">setup.md</a> on GitHub.</p>
+    </div>
+  </main>
 </div>
 
 <footer>
-  <span>PM CoPartner — MIT License</span>
+  <span>PM CoPartner &mdash; MIT License</span>
+  <span>&middot;</span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>&middot;</span>
   <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
   <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
   <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
@@ -267,10 +377,7 @@ function copyPrompt(btn) {
   navigator.clipboard.writeText(text).then(function() {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(function() {
-      btn.textContent = 'Copy prompt';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
   });
 }
 </script>

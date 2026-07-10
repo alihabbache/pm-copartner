@@ -3,65 +3,95 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Launch Agent — PM CoPartner</title>
-<meta name="description" content="Write user-facing release notes from your sprint output — in your brand voice, for your audience."/>
+<title>Launch — PM CoPartner</title>
+<meta name="description" content="Write user-facing release notes from your sprint output — in your brand voice, for your audience, ready to publish."/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.6; background: #ffffff; color: #1f2328; }
-  a { color: #3b82d4; text-decoration: none; }
+  :root {
+    --ink: #111827; --ink-2: #374151; --ink-3: #6b7280; --ink-4: #9ca3af;
+    --border: #e5e7eb; --surface: #f9fafb; --white: #ffffff;
+    --teal: #0d9488; --teal-lt: #ccfbf1; --teal-mid: #14b8a6;
+    --stage-bg: #fce7f3; --stage-fg: #9d174d;
+    --radius: 10px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system,"Segoe UI",system-ui,sans-serif; font-size: 15px; line-height: 1.6; background: var(--white); color: var(--ink); }
+  a { color: var(--teal); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  nav { border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 52px; position: sticky; top: 0; background: #fff; z-index: 100; }
-  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  nav { border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; gap: 28px; height: 54px; position: sticky; top: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); z-index: 100; }
+  .nav-logo { font-weight: 800; font-size: 14.5px; color: var(--ink); letter-spacing: -0.3px; flex-shrink: 0; display: flex; align-items: center; gap: 7px; }
   .nav-logo:hover { text-decoration: none; }
+  .nav-logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .nav-logo-mark svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
   .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .nav-links a { font-size: 13px; color: #57606a; }
-  .nav-links a:hover { color: #1f2328; text-decoration: none; }
-  .nav-links a.active { color: #1f2328; font-weight: 600; }
+  .nav-links a { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-links a.active { color: var(--ink); font-weight: 700; }
   .nav-right { margin-left: auto; }
-  .nav-right a { font-size: 13px; font-weight: 600; background: #1f2328; color: #fff; padding: 6px 14px; border-radius: 6px; }
-  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
-  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
-  .breadcrumb { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
-  .breadcrumb a { color: #8b949e; }
-  .breadcrumb a:hover { color: #3b82d4; }
-  .agent-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
-  .agent-num-lg { width: 48px; height: 48px; border-radius: 10px; background: #1f2328; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
-  .agent-title p { font-size: 14px; color: #57606a; }
-  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-  .chip { font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; color: #57606a; }
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #57606a; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 18px; }
+  .nav-right a { font-size: 12.5px; font-weight: 600; border: 1.5px solid var(--border); color: var(--ink-2); padding: 5px 15px; border-radius: 7px; }
+  .nav-right a:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
+  .page-wrap { display: grid; grid-template-columns: 200px 1fr; max-width: 960px; margin: 0 auto; padding: 40px 24px 88px; gap: 48px; }
+  @media (max-width: 720px) { .page-wrap { grid-template-columns: 1fr; } .side-nav { display: none; } }
+  .side-nav { position: sticky; top: 74px; align-self: start; }
+  .side-nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 12px; }
+  .side-nav-list { list-style: none; }
+  .side-nav-list li { margin-bottom: 2px; }
+  .side-nav-list a { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-3); font-weight: 500; padding: 6px 10px; border-radius: 7px; border: 1.5px solid transparent; }
+  .side-nav-list a:hover { background: var(--surface); color: var(--ink); text-decoration: none; }
+  .side-nav-list a.active { background: var(--teal-lt); color: var(--teal); font-weight: 700; }
+  .side-nav-list .s-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
+  .s-01 { background: #ede9fe; color: #6d28d9; }
+  .s-02 { background: #fef3c7; color: #92400e; }
+  .s-03 { background: #dbeafe; color: #1e40af; }
+  .s-04 { background: #dcfce7; color: #166534; }
+  .s-05 { background: #fce7f3; color: #9d174d; }
+  .main { min-width: 0; }
+  .breadcrumb { font-size: 12px; color: var(--ink-4); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--ink-4); }
+  .breadcrumb a:hover { color: var(--teal); text-decoration: underline; }
+  .agent-header { margin-bottom: 36px; }
+  .agent-stage { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .stage-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 4px; padding: 3px 9px; background: var(--stage-bg); color: var(--stage-fg); }
+  .stage-seq { font-size: 12px; color: var(--ink-4); font-weight: 500; }
+  .agent-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.15; }
+  .agent-header p { font-size: 14px; color: var(--ink-2); line-height: 1.65; max-width: 560px; }
+  .meta-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-chip { font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--ink-3); }
+  .save-band { display: flex; align-items: center; gap: 10px; background: var(--teal-lt); border-radius: 8px; padding: 10px 16px; margin-bottom: 36px; font-size: 13px; color: var(--ink-2); }
+  .save-band strong { color: var(--teal); }
   .section { margin-bottom: 40px; }
-  p { margin-bottom: 10px; }
-  ul { padding-left: 20px; margin-bottom: 12px; }
-  li { margin-bottom: 5px; font-size: 13.5px; color: #1f2328; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 18px; }
   .prompt-wrap { position: relative; }
-  .prompt-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12.5px; line-height: 1.7; color: #1f2328; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
-  .copy-btn { position: absolute; top: 10px; right: 10px; background: #1f2328; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .copy-btn:hover { background: #3b82d4; }
-  .copy-btn.copied { background: #2d8a4e; }
-  .output-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.7; color: #57606a; white-space: pre-wrap; word-break: break-word; }
+  .prompt-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink); white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+  .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--teal); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .copy-btn:hover { background: #0f766e; }
+  .copy-btn.copied { background: #15803d; }
+  .output-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink-3); white-space: pre-wrap; word-break: break-word; }
   .tips-list { list-style: none; padding: 0; }
-  .tips-list li { padding: 10px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
-  .tips-list li strong { color: #1f2328; }
-  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  .setup-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; }
-  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .setup-card p, .setup-card li { font-size: 12.5px; color: #57606a; }
+  .tips-list li { padding: 12px 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+  .tips-list li strong { color: var(--ink); }
+  .caution-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .caution-box strong { color: #78350f; }
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .setup-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
   .setup-card ul { padding-left: 16px; }
-  .agent-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-  .agent-nav a { font-size: 12px; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 20px; color: #57606a; background: #fff; }
-  .agent-nav a:hover { border-color: #3b82d4; color: #3b82d4; text-decoration: none; }
-  .agent-nav a.active { background: #1f2328; color: #fff; border-color: #1f2328; }
-  footer { border-top: 1px solid #e5e7eb; padding: 24px; text-align: center; font-size: 12px; color: #8b949e; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-  footer a { color: #8b949e; }
-  footer a:hover { color: #1f2328; }
+  .setup-card li { font-size: 12.5px; color: var(--ink-2); margin-bottom: 5px; }
+  .setup-note { font-size: 12px; color: var(--ink-4); }
+  p { margin-bottom: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 22px 32px; text-align: center; font-size: 12px; color: var(--ink-4); display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; align-items: center; }
+  footer a { color: var(--ink-4); }
+  footer a:hover { color: var(--ink); }
+  @media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } nav { padding: 0 16px; gap: 16px; } .nav-links { display: none; } }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-mark"><svg viewBox="0 0 12 12"><polyline points="2,9 5,4 7,7 9,3"/></svg></span>
+    PM CoPartner
+  </a>
   <div class="nav-links">
     <a href="01-discovery.html">Discovery</a>
     <a href="02-planning.html">Planning</a>
@@ -70,84 +100,94 @@
     <a href="05-launch.html" class="active">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
-<div class="page">
-  <div class="breadcrumb"><a href="index.html">PM CoPartner</a> / Agent 05</div>
+<div class="page-wrap">
+  <aside class="side-nav">
+    <div class="side-nav-label">All agents</div>
+    <ul class="side-nav-list">
+      <li><a href="01-discovery.html"><span class="s-pill s-01">Research</span> Discovery</a></li>
+      <li><a href="02-planning.html"><span class="s-pill s-02">Strategy</span> Planning</a></li>
+      <li><a href="03-specs.html"><span class="s-pill s-03">Delivery</span> Specs</a></li>
+      <li><a href="04-analytics.html"><span class="s-pill s-04">Metrics</span> Analytics</a></li>
+      <li><a href="05-launch.html" class="active"><span class="s-pill s-05">Launch</span> Launch</a></li>
+    </ul>
+  </aside>
 
-  <div class="agent-header">
-    <div class="agent-num-lg">05</div>
-    <div class="agent-title">
+  <main class="main">
+    <div class="breadcrumb"><a href="index.html">PM CoPartner</a> &rsaquo; Launch</div>
+
+    <div class="agent-header">
+      <div class="agent-stage">
+        <span class="stage-badge">Launch</span>
+        <span class="stage-seq">Agent 5 of 5</span>
+      </div>
       <h1>Launch</h1>
-      <p>Write user-facing release notes from your sprint output — in your brand voice, for your audience.</p>
-      <div class="meta-chips">
-        <span class="chip">Per sprint close</span>
-        <span class="chip">Per release</span>
-        <span class="chip">No setup required</span>
+      <p>Turn your sprint output into polished, user-facing release notes — written in your brand voice, grouped by impact, with every item framed around what it means for the user.</p>
+      <div class="meta-row">
+        <span class="meta-chip">Per sprint close</span>
+        <span class="meta-chip">Per release</span>
+        <span class="meta-chip">No setup required</span>
       </div>
     </div>
-  </div>
 
-  <div class="agent-nav">
-    <a href="01-discovery.html">01 Discovery</a>
-    <a href="02-planning.html">02 Planning</a>
-    <a href="03-specs.html">03 Specs</a>
-    <a href="04-analytics.html">04 Analytics</a>
-    <a href="05-launch.html" class="active">05 Launch</a>
-  </div>
+    <div class="save-band">
+      <strong>Time saved:</strong> ~30–60 min of copywriting per release — plus no more engineer-written changelogs.
+    </div>
 
-  <div class="section">
-    <div class="section-label">Prompt — Copy &amp; Paste into Claude</div>
-    <div class="prompt-wrap">
-      <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
-      <div class="prompt-box" id="prompt-text">You are a product communications assistant helping a Product Manager write user-facing release notes.
+    <div class="section">
+      <div class="section-label">Prompt — copy &amp; paste into Claude</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
+        <div class="prompt-box" id="prompt-text">You are a product communications specialist helping a Product Manager write clear, user-facing release notes that people will actually read.
 
 ## Your inputs
 
-**What shipped this sprint / release:**
-[CHOOSE ONE — delete the others]
+**What shipped this sprint or release:**
+[CHOOSE ONE — delete the option you are not using]
 
 Option A — Paste your sprint output:
 ---
-[PASTE CLOSED TICKETS, CHANGELOG, OR BULLET LIST HERE]
-Example format:
-- [FEAT] Redesigned onboarding flow with progress indicator
-- [FEAT] Added CSV export for all report types
+[PASTE CLOSED TICKETS, A CHANGELOG, OR A BULLET LIST HERE]
+Prefix each item with its type:
+- [FEAT] Redesigned onboarding flow with a step-by-step progress indicator
+- [FEAT] Added CSV export to all Analytics report views
 - [FIX] Login button unresponsive on iOS 16
-- [FIX] Incorrect date shown in timezone conversion
-- [CHORE] Upgraded internal logging library (no user impact)
+- [FIX] Incorrect date displayed in timezone conversion
+- [CHORE] Upgraded internal logging library — no user-facing impact
 ---
 
 Option B — Pull from a tool (requires MCP):
-Read closed tickets from [Jira sprint name / Linear sprint / GitHub milestone] for this release.
+Read all closed tickets from [Jira sprint name / Linear cycle / GitHub milestone] for this release.
 
-**Your brand voice (optional — describe in plain English):**
-[DESCRIBE YOUR TONE — or skip and the agent will default to clear, friendly, and jargon-free]
+**Your brand voice:**
+[DESCRIBE YOUR TONE — or delete this block entirely and the agent will default to clear, friendly, and jargon-free]
 Examples:
-- "Professional but approachable. No jargon. Write like you're talking to a smart non-technical user."
-- "Concise and direct. Engineers and PMs read this. Technical terms are fine."
+- "Professional but human. No buzzwords. Write as if you are talking to a smart non-technical user."
+- "Concise and direct. Our audience includes engineers and PMs. Technical terms are fine."
 - "Warm and encouraging. Our users are small business owners, not developers."
 
-Or: Read our tone-of-voice guide from [Notion page URL / Drive doc].
+Or: Read our tone-of-voice guidelines from [Notion page / Drive doc].
 
 **Release details:**
 - Product name: [YOUR PRODUCT NAME]
-- Version or sprint: [e.g. v2.4 / Sprint 18 / October Release]
+- Version or sprint label: [e.g. v2.4 / Sprint 18 / October 2025 Release]
 - Release date: [DATE]
-- Audience: [External users / Internal team / Both]
+- Primary audience: [External customers / Internal team / Both]
 
 ## Your task
 
-1. Read all closed tickets / shipped items.
-2. Ignore any internal-only items with no user impact (infra upgrades, chores, internal tooling).
+1. Read every item carefully.
+2. Discard internal-only items with no user-facing impact — infrastructure changes, code refactors, dependency upgrades, and internal tooling. Do not mention these in the output.
 3. For each user-facing item:
-   - Write a plain-language title (not the ticket title — write it for a user, not a developer)
-   - Write 1–2 sentences explaining what changed and why the user will care
-   - Group features together, fixes together
-4. Write a one-sentence summary of the overall release.
-5. Flag any item where you are uncertain whether it has user-facing impact — mark it [NEEDS PM REVIEW].
+   - Write a clear, human title. Do not copy the ticket title — write it the way a user would describe the change.
+   - Write 1–2 sentences: what changed, and specifically why the user will care or what problem it solves for them.
+   - Match the brand voice provided above.
+4. Group items: features and improvements together first, bug fixes second.
+5. Write a single opening sentence summarising the whole release in plain language.
+6. For any item where you are uncertain whether it has user-facing impact, include it but mark it [NEEDS PM REVIEW].
 
 ## Output format
 
@@ -155,88 +195,100 @@ Or: Read our tone-of-voice guide from [Notion page URL / Drive doc].
 # [PRODUCT NAME] Release Notes — [VERSION / SPRINT]
 **Released:** [DATE]
 
-## What's New in This Release
-[One sentence summary of the release.]
+## What's New
+[One plain-language sentence summarising the release.]
 
-### ✨ New Features
+### New Features &amp; Improvements
 
-#### [User-facing feature title]
-[1–2 sentences. What changed. Why the user will care. Written in the brand voice provided.]
+#### [User-facing title — not the ticket title]
+[1–2 sentences. What changed. Why the user will care. Written in the brand voice above.]
 
-#### [User-facing feature title]
+#### [User-facing title]
 [...]
 
-### 🐛 Bug Fixes &amp; Improvements
-- **[Fix title]:** [One sentence — what was broken, now fixed.]
+### Bug Fixes
+
+- **[Fix title]:** [One sentence — what was wrong and what is fixed.]
 - **[Fix title]:** [...]
 
 ---
-*Have questions or feedback? [SUPPORT CHANNEL / EMAIL]*
+*Questions or feedback? [SUPPORT CHANNEL / EMAIL]*
 
 ---
 
 [OPTIONAL:]
-Save this to [Google Drive / Notion page / filename].
-Send via [Gmail / email] to [recipient / mailing list].
-Post as a Notion page for internal review before publishing.</div>
+Save this to [Google Drive / Notion / filename].
+Send via [Gmail / email] to [recipient list].
+Post for internal review before publishing externally.</div>
+      </div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-label">What You Get Back</div>
-    <div class="output-box"># [Product] Release Notes — [Version / Sprint]
+    <div class="section">
+      <div class="section-label">What you get back</div>
+      <div class="output-box"># [Product] Release Notes — [Version / Sprint]
 Released: [Date]
 
-## What's New in This Release (one-sentence summary)
+## What's New (one-sentence plain-language summary)
 
-### ✨ New Features
-#### [User-facing title]
+### New Features &amp; Improvements
+#### [User-facing title — written for users, not engineers]
 [1–2 sentences. What changed. Why the user cares. In brand voice.]
 
-### 🐛 Bug Fixes &amp; Improvements
-- **[Fix]:** one sentence
+### Bug Fixes
+- **[Fix title]:** one sentence — what was wrong, now fixed.
 
 ---
-*Have questions? [support channel]*</div>
-  </div>
+*Questions? [support channel]*</div>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tips &amp; Variations</div>
-    <ul class="tips-list">
-      <li><strong>No ticket system?</strong> List what shipped as bullet points from memory or a meeting note — the agent handles loose input.</li>
-      <li><strong>Mixed audience?</strong> Add: <em>"Write two versions — one for external users (plain language) and one for the internal team (technical detail)."</em></li>
-      <li><strong>Want a shorter output?</strong> Add: <em>"Keep the notes to a maximum of 300 words. Prioritise the most impactful changes."</em></li>
-      <li><strong>Want social-ready copy too?</strong> Add: <em>"After the release notes, write a short version (2–3 sentences) suitable for a LinkedIn post or in-app announcement banner."</em></li>
-      <li><strong>Shipped nothing user-facing?</strong> Add: <em>"If there are no user-facing changes, write a brief internal update explaining what was worked on and what's coming next."</em></li>
-    </ul>
-  </div>
+    <div class="section">
+      <div class="section-label">Tips &amp; variations</div>
+      <ul class="tips-list">
+        <li><strong>No ticket system?</strong> List what shipped as bullet points from a meeting note or memory — the agent works with loose, unstructured input.</li>
+        <li><strong>Mixed audience?</strong> Add: <em>"Write two versions: one for external users (plain language, user-benefit focus) and one for the internal team (technical detail, includes chores and infra)."</em></li>
+        <li><strong>Want it shorter?</strong> Add: <em>"Limit to 300 words maximum. Prioritise the highest-impact changes."</em></li>
+        <li><strong>Want social-ready copy?</strong> Add: <em>"After the release notes, write a 2–3 sentence version suitable for a LinkedIn post or an in-app banner announcement."</em></li>
+        <li><strong>Nothing user-facing this sprint?</strong> Add: <em>"If there are no user-facing changes, write a short internal update — what was worked on and what is coming next sprint."</em></li>
+      </ul>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tool Connections (All Optional)</div>
-    <div class="setup-grid">
-      <div class="setup-card">
-        <h4>Minimal path (no tools)</h4>
-        <ul>
-          <li>Paste your closed tickets or sprint summary</li>
-          <li>Describe your brand voice in one sentence</li>
-          <li>Run — no accounts or connectors needed</li>
-        </ul>
-      </div>
-      <div class="setup-card">
-        <h4>Connected path (with MCP)</h4>
-        <ul>
-          <li><strong>Jira / Linear:</strong> pull closed sprint tickets</li>
-          <li><strong>Notion:</strong> read tone-of-voice guide + save notes</li>
-          <li><strong>Gmail:</strong> send release notes to mailing list</li>
-        </ul>
+    <div class="section">
+      <div class="section-label">When not to use this agent</div>
+      <div class="caution-box">
+        <strong>Skip this agent if:</strong> you have no closed tickets or completed work to describe — it can not invent what shipped. Also avoid using it for major version announcements that require legal or marketing review before release; use it as a first draft, not a publish-ready document.
       </div>
     </div>
-    <p style="font-size:12.5px; color:#57606a;">Full setup instructions in <a href="https://github.com/alihabbache/pm-copartner/blob/main/05-launch/setup.md" target="_blank">setup.md</a> on GitHub.</p>
-  </div>
+
+    <div class="section">
+      <div class="section-label">Tool connections (all optional)</div>
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h4>Minimal — no tools needed</h4>
+          <ul>
+            <li>Paste your closed tickets or sprint summary</li>
+            <li>Describe your brand voice in one sentence</li>
+            <li>Run — zero accounts or connectors required</li>
+          </ul>
+        </div>
+        <div class="setup-card">
+          <h4>Connected — with MCP</h4>
+          <ul>
+            <li><strong>Jira / Linear:</strong> pull closed sprint tickets automatically</li>
+            <li><strong>Notion:</strong> read tone-of-voice guide + save the notes</li>
+            <li><strong>Gmail:</strong> send release notes to a mailing list</li>
+          </ul>
+        </div>
+      </div>
+      <p class="setup-note">Full setup in <a href="https://github.com/alihabbache/pm-copartner/blob/main/05-launch/setup.md" target="_blank">setup.md</a> on GitHub.</p>
+    </div>
+  </main>
 </div>
 
 <footer>
-  <span>PM CoPartner — MIT License</span>
+  <span>PM CoPartner &mdash; MIT License</span>
+  <span>&middot;</span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>&middot;</span>
   <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
   <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
   <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
@@ -248,10 +300,7 @@ function copyPrompt(btn) {
   navigator.clipboard.writeText(text).then(function() {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(function() {
-      btn.textContent = 'Copy prompt';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
   });
 }
 </script>

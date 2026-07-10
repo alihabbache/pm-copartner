@@ -3,66 +3,95 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Planning Agent — PM CoPartner</title>
+<title>Planning — PM CoPartner</title>
 <meta name="description" content="Score and rank your backlog against your OKRs. Every item gets a composite score and a one-line rationale."/>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "Segoe UI", system-ui, sans-serif; font-size: 15px; line-height: 1.6; background: #ffffff; color: #1f2328; }
-  a { color: #3b82d4; text-decoration: none; }
+  :root {
+    --ink: #111827; --ink-2: #374151; --ink-3: #6b7280; --ink-4: #9ca3af;
+    --border: #e5e7eb; --surface: #f9fafb; --white: #ffffff;
+    --teal: #0d9488; --teal-lt: #ccfbf1; --teal-mid: #14b8a6;
+    --stage-bg: #fef3c7; --stage-fg: #92400e;
+    --radius: 10px;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system,"Segoe UI",system-ui,sans-serif; font-size: 15px; line-height: 1.6; background: var(--white); color: var(--ink); }
+  a { color: var(--teal); text-decoration: none; }
   a:hover { text-decoration: underline; }
-  nav { border-bottom: 1px solid #e5e7eb; padding: 0 24px; display: flex; align-items: center; gap: 24px; height: 52px; position: sticky; top: 0; background: #fff; z-index: 100; }
-  .nav-logo { font-weight: 700; font-size: 15px; color: #1f2328; flex-shrink: 0; }
+  nav { border-bottom: 1px solid var(--border); padding: 0 32px; display: flex; align-items: center; gap: 28px; height: 54px; position: sticky; top: 0; background: rgba(255,255,255,0.96); backdrop-filter: blur(10px); z-index: 100; }
+  .nav-logo { font-weight: 800; font-size: 14.5px; color: var(--ink); letter-spacing: -0.3px; flex-shrink: 0; display: flex; align-items: center; gap: 7px; }
   .nav-logo:hover { text-decoration: none; }
+  .nav-logo-mark { width: 22px; height: 22px; border-radius: 6px; background: var(--teal); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .nav-logo-mark svg { width: 12px; height: 12px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; }
   .nav-links { display: flex; gap: 20px; flex-wrap: wrap; }
-  .nav-links a { font-size: 13px; color: #57606a; }
-  .nav-links a:hover { color: #1f2328; text-decoration: none; }
-  .nav-links a.active { color: #1f2328; font-weight: 600; }
+  .nav-links a { font-size: 13px; color: var(--ink-3); font-weight: 500; }
+  .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-links a.active { color: var(--ink); font-weight: 700; }
   .nav-right { margin-left: auto; }
-  .nav-right a { font-size: 13px; font-weight: 600; background: #1f2328; color: #fff; padding: 6px 14px; border-radius: 6px; }
-  .nav-right a:hover { background: #3b82d4; text-decoration: none; }
-  .page { max-width: 760px; margin: 0 auto; padding: 40px 24px 80px; }
-  .breadcrumb { font-size: 12px; color: #8b949e; margin-bottom: 24px; }
-  .breadcrumb a { color: #8b949e; }
-  .breadcrumb a:hover { color: #3b82d4; }
-  .agent-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
-  .agent-num-lg { width: 48px; height: 48px; border-radius: 10px; background: #1f2328; color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .agent-title h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
-  .agent-title p { font-size: 14px; color: #57606a; }
-  .meta-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
-  .chip { font-size: 11px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 20px; padding: 3px 10px; color: #57606a; }
-  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #57606a; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin-bottom: 18px; }
+  .nav-right a { font-size: 12.5px; font-weight: 600; border: 1.5px solid var(--border); color: var(--ink-2); padding: 5px 15px; border-radius: 7px; }
+  .nav-right a:hover { border-color: var(--teal); color: var(--teal); text-decoration: none; }
+  .page-wrap { display: grid; grid-template-columns: 200px 1fr; max-width: 960px; margin: 0 auto; padding: 40px 24px 88px; gap: 48px; }
+  @media (max-width: 720px) { .page-wrap { grid-template-columns: 1fr; } .side-nav { display: none; } }
+  .side-nav { position: sticky; top: 74px; align-self: start; }
+  .side-nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); margin-bottom: 12px; }
+  .side-nav-list { list-style: none; }
+  .side-nav-list li { margin-bottom: 2px; }
+  .side-nav-list a { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--ink-3); font-weight: 500; padding: 6px 10px; border-radius: 7px; border: 1.5px solid transparent; }
+  .side-nav-list a:hover { background: var(--surface); color: var(--ink); text-decoration: none; }
+  .side-nav-list a.active { background: var(--teal-lt); color: var(--teal); font-weight: 700; }
+  .side-nav-list .s-pill { font-size: 9px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; border-radius: 3px; padding: 1px 5px; flex-shrink: 0; }
+  .s-01 { background: #ede9fe; color: #6d28d9; }
+  .s-02 { background: #fef3c7; color: #92400e; }
+  .s-03 { background: #dbeafe; color: #1e40af; }
+  .s-04 { background: #dcfce7; color: #166534; }
+  .s-05 { background: #fce7f3; color: #9d174d; }
+  .main { min-width: 0; }
+  .breadcrumb { font-size: 12px; color: var(--ink-4); margin-bottom: 24px; }
+  .breadcrumb a { color: var(--ink-4); }
+  .breadcrumb a:hover { color: var(--teal); text-decoration: underline; }
+  .agent-header { margin-bottom: 36px; }
+  .agent-stage { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 10px; }
+  .stage-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; border-radius: 4px; padding: 3px 9px; background: var(--stage-bg); color: var(--stage-fg); }
+  .stage-seq { font-size: 12px; color: var(--ink-4); font-weight: 500; }
+  .agent-header h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; line-height: 1.15; }
+  .agent-header p { font-size: 14px; color: var(--ink-2); line-height: 1.65; max-width: 560px; }
+  .meta-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .meta-chip { font-size: 11px; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3px 11px; color: var(--ink-3); }
+  .save-band { display: flex; align-items: center; gap: 10px; background: var(--teal-lt); border-radius: 8px; padding: 10px 16px; margin-bottom: 36px; font-size: 13px; color: var(--ink-2); }
+  .save-band strong { color: var(--teal); }
   .section { margin-bottom: 40px; }
-  h2 { font-size: 16px; font-weight: 700; margin-bottom: 12px; }
-  p { margin-bottom: 10px; }
-  ul { padding-left: 20px; margin-bottom: 12px; }
-  li { margin-bottom: 5px; font-size: 13.5px; color: #1f2328; }
+  .section-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-4); border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 18px; }
   .prompt-wrap { position: relative; }
-  .prompt-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12.5px; line-height: 1.7; color: #1f2328; white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
-  .copy-btn { position: absolute; top: 10px; right: 10px; background: #1f2328; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; }
-  .copy-btn:hover { background: #3b82d4; }
-  .copy-btn.copied { background: #2d8a4e; }
-  .output-box { background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px 20px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 12px; line-height: 1.7; color: #57606a; white-space: pre-wrap; word-break: break-word; }
+  .prompt-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink); white-space: pre-wrap; word-break: break-word; max-height: 480px; overflow-y: auto; }
+  .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--teal); color: #fff; border: none; border-radius: 6px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; }
+  .copy-btn:hover { background: #0f766e; }
+  .copy-btn.copied { background: #15803d; }
+  .output-box { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 18px 20px; font-family: "SFMono-Regular",Consolas,monospace; font-size: 12px; line-height: 1.75; color: var(--ink-3); white-space: pre-wrap; word-break: break-word; }
   .tips-list { list-style: none; padding: 0; }
-  .tips-list li { padding: 10px 12px; background: #f7f8fa; border: 1px solid #e5e7eb; border-radius: 6px; margin-bottom: 8px; font-size: 13px; }
-  .tips-list li strong { color: #1f2328; }
-  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
-  .setup-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 14px 16px; }
-  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
-  .setup-card p, .setup-card li { font-size: 12.5px; color: #57606a; }
+  .tips-list li { padding: 12px 16px; background: var(--surface); border: 1.5px solid var(--border); border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+  .tips-list li strong { color: var(--ink); }
+  .caution-box { background: #fff7ed; border: 1.5px solid #fed7aa; border-radius: 8px; padding: 14px 18px; font-size: 13px; color: #92400e; line-height: 1.6; }
+  .caution-box strong { color: #78350f; }
+  .setup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .setup-card { border: 1.5px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+  .setup-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; color: var(--ink); }
   .setup-card ul { padding-left: 16px; }
-  .agent-nav { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; }
-  .agent-nav a { font-size: 12px; padding: 5px 12px; border: 1px solid #e5e7eb; border-radius: 20px; color: #57606a; background: #fff; }
-  .agent-nav a:hover { border-color: #3b82d4; color: #3b82d4; text-decoration: none; }
-  .agent-nav a.active { background: #1f2328; color: #fff; border-color: #1f2328; }
-  footer { border-top: 1px solid #e5e7eb; padding: 24px; text-align: center; font-size: 12px; color: #8b949e; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-  footer a { color: #8b949e; }
-  footer a:hover { color: #1f2328; }
+  .setup-card li { font-size: 12.5px; color: var(--ink-2); margin-bottom: 5px; }
+  .setup-note { font-size: 12px; color: var(--ink-4); }
+  p { margin-bottom: 10px; }
+  footer { border-top: 1px solid var(--border); padding: 22px 32px; text-align: center; font-size: 12px; color: var(--ink-4); display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; align-items: center; }
+  footer a { color: var(--ink-4); }
+  footer a:hover { color: var(--ink); }
+  @media (max-width: 600px) { .setup-grid { grid-template-columns: 1fr; } nav { padding: 0 16px; gap: 16px; } .nav-links { display: none; } }
 </style>
 </head>
 <body>
 
 <nav>
-  <a class="nav-logo" href="index.html">PM CoPartner</a>
+  <a class="nav-logo" href="index.html">
+    <span class="nav-logo-mark"><svg viewBox="0 0 12 12"><polyline points="2,9 5,4 7,7 9,3"/></svg></span>
+    PM CoPartner
+  </a>
   <div class="nav-links">
     <a href="01-discovery.html">Discovery</a>
     <a href="02-planning.html" class="active">Planning</a>
@@ -71,79 +100,91 @@
     <a href="05-launch.html">Launch</a>
   </div>
   <div class="nav-right">
-    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub →</a>
+    <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
-<div class="page">
-  <div class="breadcrumb"><a href="index.html">PM CoPartner</a> / Agent 02</div>
+<div class="page-wrap">
+  <aside class="side-nav">
+    <div class="side-nav-label">All agents</div>
+    <ul class="side-nav-list">
+      <li><a href="01-discovery.html"><span class="s-pill s-01">Research</span> Discovery</a></li>
+      <li><a href="02-planning.html" class="active"><span class="s-pill s-02">Strategy</span> Planning</a></li>
+      <li><a href="03-specs.html"><span class="s-pill s-03">Delivery</span> Specs</a></li>
+      <li><a href="04-analytics.html"><span class="s-pill s-04">Metrics</span> Analytics</a></li>
+      <li><a href="05-launch.html"><span class="s-pill s-05">Launch</span> Launch</a></li>
+    </ul>
+  </aside>
 
-  <div class="agent-header">
-    <div class="agent-num-lg">02</div>
-    <div class="agent-title">
+  <main class="main">
+    <div class="breadcrumb"><a href="index.html">PM CoPartner</a> &rsaquo; Planning</div>
+
+    <div class="agent-header">
+      <div class="agent-stage">
+        <span class="stage-badge">Strategy</span>
+        <span class="stage-seq">Agent 2 of 5</span>
+      </div>
       <h1>Planning</h1>
-      <p>Score and rank your backlog against your OKRs. Every item gets a composite score and a one-line rationale.</p>
-      <div class="meta-chips">
-        <span class="chip">Weekly before sprint planning</span>
-        <span class="chip">Before roadmap reviews</span>
-        <span class="chip">No setup required</span>
+      <p>Score your entire backlog against your OKRs using a weighted model. Every item gets a priority score and a one-line rationale — no more gut-feel decisions in sprint planning.</p>
+      <div class="meta-row">
+        <span class="meta-chip">Before sprint planning</span>
+        <span class="meta-chip">Before roadmap reviews</span>
+        <span class="meta-chip">No setup required</span>
       </div>
     </div>
-  </div>
 
-  <div class="agent-nav">
-    <a href="01-discovery.html">01 Discovery</a>
-    <a href="02-planning.html" class="active">02 Planning</a>
-    <a href="03-specs.html">03 Specs</a>
-    <a href="04-analytics.html">04 Analytics</a>
-    <a href="05-launch.html">05 Launch</a>
-  </div>
+    <div class="save-band">
+      <strong>Time saved:</strong> ~1–2 hours of manual scoring and debate, every planning cycle.
+    </div>
 
-  <div class="section">
-    <div class="section-label">Prompt — Copy &amp; Paste into Claude</div>
-    <div class="prompt-wrap">
-      <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
-      <div class="prompt-box" id="prompt-text">You are a product strategy assistant helping a Product Manager prioritise their backlog.
+    <div class="section">
+      <div class="section-label">Prompt — copy &amp; paste into Claude</div>
+      <div class="prompt-wrap">
+        <button class="copy-btn" onclick="copyPrompt(this)">Copy prompt</button>
+        <div class="prompt-box" id="prompt-text">You are a product strategy advisor helping a Product Manager prioritise their backlog against current business goals.
 
 ## Your inputs
 
 **Backlog items:**
-[CHOOSE ONE — delete the others]
+[CHOOSE ONE — delete the option you are not using]
 
 Option A — Paste your backlog:
 ---
-[PASTE BACKLOG ITEMS HERE — one per line, or copy from Jira/Linear/Notion/spreadsheet]
+[PASTE BACKLOG ITEMS HERE — one per line, or copy directly from Jira, Linear, Notion, or a spreadsheet]
 Example format:
 - Redesign onboarding flow
-- Add CSV export
-- Fix login bug on iOS
+- Add CSV export to all report views
+- Fix login button unresponsive on iOS
 - Build API rate limiting
+- Improve search relevance
 ---
 
 Option B — Pull from a tool (requires MCP):
-Read the open backlog items from [Jira project / Linear team / Notion database URL].
+Read the open backlog items from [Jira project key / Linear team name / Notion database URL].
 
 **Current strategy / OKRs:**
-[PASTE OR DESCRIBE YOUR CURRENT GOAL — even one sentence works]
-Example: "This quarter we are focused on reducing churn for SMB customers."
-Or: Read our OKRs from [Notion page URL].
+[PASTE OR DESCRIBE YOUR CURRENT GOAL — even one plain-English sentence is sufficient]
+Example: "This quarter we are focused on reducing early churn among SMB customers in their first 30 days."
+Or: Read our current OKRs from [Notion page URL / Drive doc].
 
-**Scoring weights (optional — delete if you want defaults):**
+**Scoring weights (optional — delete this block to use defaults):**
 - Impact weight: [1–5, default 2]
-- Effort weight: [1–5, default 1] (lower effort = higher score)
+- Effort weight: [1–5, default 1]  ← lower effort = higher score
 - Strategic fit weight: [1–5, default 3]
 
 ## Your task
 
-1. For each backlog item, score it on:
-   - **Impact** (High / Medium / Low) — how much does this move the key metric or solve a user pain?
-   - **Effort** (High / Medium / Low) — rough complexity/size estimate
-   - **Strategic fit** (Direct / Partial / None) — how closely does this serve the stated OKR?
-2. Compute a composite priority score (out of 10).
-3. Rank all items by score, highest first.
-4. Write a one-line rationale for each item explaining the rank.
-5. Flag any items that seem misaligned with current strategy and recommend parking them.
-6. Flag any items that are quick wins (High impact + Low effort).
+For each backlog item, apply the following scoring model:
+
+1. **Impact** (High / Medium / Low) — how significantly does this move a key metric or relieve a user pain point?
+2. **Effort** (High / Medium / Low) — rough complexity and size estimate; infer if not provided
+3. **Strategic fit** (Direct / Partial / None) — how closely does this serve the stated OKR or strategy?
+4. Compute a composite priority score out of 10 using the weights above.
+5. Rank all items from highest to lowest score.
+6. Write a one-line rationale for each item that explains why it ranked where it did.
+7. Highlight **Quick Wins** — items with High impact and Low effort.
+8. Flag items with little or no strategic fit and recommend parking them for a future quarter.
+9. Note any assumptions you made due to missing information.
 
 ## Output format
 
@@ -158,71 +199,83 @@ Or: Read our OKRs from [Notion page URL].
 | 1    | ...  | High   | Low    | Direct        | 9/10  | ...       |
 | 2    | ...  | ...    | ...    | ...           | ...   | ...       |
 
-## ⚡ Quick Wins (Do First)
-- [Item] — [why]
+## Quick Wins — Do These First
+- [Item] — [one sentence on why this is a quick win]
 
-## 🅿️ Parking Lot (Low fit with current strategy)
-- [Item] — [reason to defer]
+## Parking Lot — Low strategic fit this quarter
+- [Item] — [brief reason to defer]
 
-## Notes
-- Strategy reference: [what you used]
-- Assumptions made: [any gaps you filled in]
+## Notes &amp; Assumptions
+- Strategy reference: [what you used as the goal]
+- Assumptions: [any gaps you filled in independently]
 ---
 
 [OPTIONAL:]
 Save this brief to [Notion / Google Drive / filename].</div>
+      </div>
     </div>
-  </div>
 
-  <div class="section">
-    <div class="section-label">What You Get Back</div>
-    <div class="output-box"># Prioritisation Brief — Week of [Date]
-OKR / Focus: [goal] | Items reviewed: N
+    <div class="section">
+      <div class="section-label">What you get back</div>
+      <div class="output-box"># Prioritisation Brief — Week of [Date]
+OKR / Focus: [goal in one sentence]  |  Items reviewed: N
 
 ## Priority Ranking
 | Rank | Item | Impact | Effort | Strategic Fit | Score | Rationale |
 
-## ⚡ Quick Wins (Do First)
-## 🅿️ Parking Lot
-## Notes</div>
-  </div>
+## Quick Wins — Do These First
+## Parking Lot — Low strategic fit this quarter
+## Notes &amp; Assumptions</div>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tips &amp; Variations</div>
-    <ul class="tips-list">
-      <li><strong>No formal OKRs?</strong> Just describe your goal in plain English: <em>"We want more free users to convert to paid."</em> That's enough.</li>
-      <li><strong>Large backlog?</strong> Add: <em>"Focus on the top 20 items — skip anything tagged 'tech debt' or 'future'."</em></li>
-      <li><strong>Want to include team input?</strong> Add the team's effort estimates as a column in your paste.</li>
-      <li><strong>Want a confidence score?</strong> Add: <em>"Add a 'Confidence' column (High/Low) based on how certain the scoring assumptions are."</em></li>
-    </ul>
-  </div>
+    <div class="section">
+      <div class="section-label">Tips &amp; variations</div>
+      <ul class="tips-list">
+        <li><strong>No formal OKRs?</strong> Describe your goal in plain English: <em>"We want more free users to convert to paid."</em> That is enough for the agent to score against.</li>
+        <li><strong>Large backlog?</strong> Add: <em>"Focus only on the top 20 items. Skip anything tagged 'tech debt', 'future', or 'icebox'."</em></li>
+        <li><strong>Want to include team estimates?</strong> Add an effort column to your paste — the agent will use those numbers instead of inferring.</li>
+        <li><strong>Want a confidence rating?</strong> Add: <em>"Add a 'Confidence' column (High / Low) indicating how certain the scoring assumptions are."</em></li>
+        <li><strong>Running a roadmap review?</strong> Add: <em>"Group the output by quarter — Now / Next / Later — based on the scores."</em></li>
+      </ul>
+    </div>
 
-  <div class="section">
-    <div class="section-label">Tool Connections (All Optional)</div>
-    <div class="setup-grid">
-      <div class="setup-card">
-        <h4>Minimal path (no tools)</h4>
-        <ul>
-          <li>Paste your backlog list into Claude</li>
-          <li>Add one sentence describing your OKR</li>
-          <li>Run — no accounts or connectors needed</li>
-        </ul>
-      </div>
-      <div class="setup-card">
-        <h4>Connected path (with MCP)</h4>
-        <ul>
-          <li><strong>Linear / Jira:</strong> pull backlog automatically</li>
-          <li><strong>Notion:</strong> read OKRs + save output</li>
-          <li><strong>Google Drive:</strong> save prioritisation brief</li>
-        </ul>
+    <div class="section">
+      <div class="section-label">When not to use this agent</div>
+      <div class="caution-box">
+        <strong>Skip this agent if:</strong> you have fewer than 5 backlog items (just rank them yourself), or if your company has no stated strategy or OKRs at all — without a goal to score against, the output will reflect generic best practices rather than your specific priorities.
       </div>
     </div>
-    <p style="font-size:12.5px; color:#57606a;">Full setup instructions in <a href="https://github.com/alihabbache/pm-copartner/blob/main/02-planning/setup.md" target="_blank">setup.md</a> on GitHub.</p>
-  </div>
+
+    <div class="section">
+      <div class="section-label">Tool connections (all optional)</div>
+      <div class="setup-grid">
+        <div class="setup-card">
+          <h4>Minimal — no tools needed</h4>
+          <ul>
+            <li>Paste your backlog list into Claude</li>
+            <li>Add one sentence describing your OKR</li>
+            <li>Run — zero accounts or connectors required</li>
+          </ul>
+        </div>
+        <div class="setup-card">
+          <h4>Connected — with MCP</h4>
+          <ul>
+            <li><strong>Linear / Jira:</strong> pull the backlog automatically</li>
+            <li><strong>Notion:</strong> read OKRs and save the output brief</li>
+            <li><strong>Google Drive:</strong> save the prioritisation brief</li>
+          </ul>
+        </div>
+      </div>
+      <p class="setup-note">Full setup in <a href="https://github.com/alihabbache/pm-copartner/blob/main/02-planning/setup.md" target="_blank">setup.md</a> on GitHub.</p>
+    </div>
+  </main>
 </div>
 
 <footer>
-  <span>PM CoPartner — MIT License</span>
+  <span>PM CoPartner &mdash; MIT License</span>
+  <span>&middot;</span>
+  <span>Created by <a href="https://www.linkedin.com/in/alihabbache/" target="_blank">Ali Habbache</a></span>
+  <span>&middot;</span>
   <a href="https://github.com/alihabbache/pm-copartner" target="_blank">GitHub</a>
   <a href="https://github.com/alihabbache/pm-copartner/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
   <a href="https://github.com/alihabbache/pm-copartner/issues/new/choose" target="_blank">Report an issue</a>
@@ -234,10 +287,7 @@ function copyPrompt(btn) {
   navigator.clipboard.writeText(text).then(function() {
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(function() {
-      btn.textContent = 'Copy prompt';
-      btn.classList.remove('copied');
-    }, 2000);
+    setTimeout(function() { btn.textContent = 'Copy prompt'; btn.classList.remove('copied'); }, 2000);
   });
 }
 </script>
